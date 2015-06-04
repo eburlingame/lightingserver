@@ -67,20 +67,20 @@ class RangeParser(object):
 
 
     def add(self, array):
-        self.captureRange.update(set(array))
+        self.set.update(set(array))
 
     def remove(self, array):
-        self.captureRange -= set(array)
+        self.set -= set(array)
 
     def toString(self):
         toRet = ""
-        for i in self.captureRange:
+        for i in self.set:
             toRet += str(i) + " "
         return toRet
 
     def __init__(self, _raw):
         self.raw = _raw
-        self.captureRange = set()
+        self.set = set()
 
         # self.parseThroughs()
         # self.parseAnds()

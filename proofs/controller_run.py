@@ -12,7 +12,7 @@ control.patch_channel(4, 4)
 
 print control.patch.dmx
 
-set = ChannelSet(set([1, -1, 3, 4]))
+set = ChannelSet(set([1, 2, 3, 4]))
 control.at(set, 50)
 
 control.update()

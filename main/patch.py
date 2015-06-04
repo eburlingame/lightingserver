@@ -19,10 +19,12 @@ class Patch:
 
         chn.fadeTo(value, fadeTime)
 
+
     # Sets the channels according to the supplied ChannelState instance
     def set_channel_state(self, channelState, fadeTime = 0):
         for channel in channelState.states:
             self.set_channel(channel["number"], channel["value"], fadeTime)
+
 
     # Patches a single channel to a DMX address
     def patch_channel(self, number, dmxAddr, label = "", fixture = ""):
@@ -32,6 +34,7 @@ class Patch:
         self.channels.append(newChn)
         self.make_room()
 
+
     # Extends the size of dmx[] from 0 to the maximum channel's DMX address
     def make_room(self):
         max = 0
@@ -40,6 +43,7 @@ class Patch:
                 max = chn.dmxAddr
 
         self.dmx = [0 for i in range(0, max)]
+
 
     def get_channel(self, num):
         for chn in self.channels:
@@ -54,19 +58,22 @@ class Patch:
         return False
 
 
+
     def unpatch_channel(self, num):
         for chn in self.channels:
-            if chn.num == num:
+            if chn.number == num:
                 self.channels.remove(chn)
                 return True
         return False
 
     def unpatch_dmx(self, dmx):
         for chn in self.channels:
-            if chn.dmx == dmx:
+            if chn.dmxAddr == dmx:
                 self.channels.remove(chn)
                 return True
         return False
+
+
 
     # Updates all the channel fades and dmx output array
     # Takes diff in seconds
