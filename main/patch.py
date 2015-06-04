@@ -26,6 +26,8 @@ class Patch:
 
     # Patches a single channel to a DMX address
     def patch_channel(self, number, dmxAddr, label = "", fixture = ""):
+        self.unpatch_channel(number) # Remove the channel, if it's been patched
+        self.unpatch_dmx(dmxAddr) # Remove the channel with dmx addression, if it's been patched
         newChn = Channel(number, dmxAddr, label, fixture)
         self.channels.append(newChn)
         self.make_room()
@@ -45,9 +47,31 @@ class Patch:
                 return chn
         return False
 
+    def get_channel_by_dmx(self, dmx):
+        for chn in self.channels:
+            if chn.dmx == dmx:
+                return chn
+        return False
+
+
+    def unpatch_channel(self, num):
+        for chn in self.channels:
+            if chn.num == num:
+                self.channels.remove(chn)
+                return True
+        return False
+
+    def unpatch_dmx(self, dmx):
+        for chn in self.channels:
+            if chn.dmx == dmx:
+                self.channels.remove(chn)
+                return True
+        return False
+
     # Updates all the channel fades and dmx output array
     # Takes diff in seconds
     def update_channels(self, diff):
         for channel in self.channels:
             channel.update(diff)
             self.dmx[channel.dmxAddr - 1] = to_255(channel.value)
+
