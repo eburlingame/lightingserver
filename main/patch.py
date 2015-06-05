@@ -15,7 +15,7 @@ class Patch:
     def set_channel(self, channelNumer, value, fadeTime = 0):
         chn = self.get_channel(channelNumer)
         if chn == False:
-            raise Exception("Channel not found")
+            return False
 
         chn.fadeTo(value, fadeTime)
 

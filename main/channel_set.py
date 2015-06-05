@@ -21,8 +21,18 @@ class ChannelState:
                 "value": value
             })
 
+
 # Represents a selection of channels
 class ChannelSet:
-
     def __init__(self, set = None):
         self.set = set
+
+    def to_string(self):
+        if len(self.set) == 0:
+            return 'Empty'
+        l = list(self.set)
+
+        ret = str(l[0])
+        for i in range(1, len(l)):
+            ret += ", " + str(l[i])
+        return ret

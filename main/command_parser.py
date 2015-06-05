@@ -1,6 +1,7 @@
 __author__ = 'eric'
 import re
-from range_parser import RangeParser
+from range_parser import *
+from channel_set import *
 from controller import Controller
 
 class CommandParser:
@@ -15,13 +16,31 @@ class CommandParser:
             # patch channel [channel number] dmx [dmx address] ~fixture ~[fixture] ~label ~[label]
             "pattern": "(?:patch)(?:channel)(\d+)(?:dmx)(\d+)(?:fixture)?(\d+)?(?:label)?(\w+)?",
             "function": self.controller.patch_channel_list,
-            "params" : ("int", "int", "string", "string")
+            "params" : ["int", "int", "string", "string"]
         },
         {
-            # patch channel [channel number] dmx [dmx address] ~fixture ~[fixture] ~label ~[label]
-            "pattern": "(.+)(?:@|at|\*)(\d+)",
-            "function": self.controller.range_at_list,
-            "params" : ("range", "int")
+            # ~Channel [Channel Selection] (@, at, *) [percent]
+            "pattern": "(?:channel)?(.+)(?:@|at|\*)(\d+)",
+            "function": self.controller.at_list,
+            "params" : ["channel_range", "int"]
+        },
+        {
+            # save (group, grp) [name] {channel selection}
+            "pattern": "(?:save)?(?:group)(.+){(.+)}",
+            "function": self.controller.save_group_list,
+            "params" : ["string", "channel_range"]
+        },
+        {
+            # save (group, grp) [name]
+            "pattern": "(?:save)?(?:group)(.+)",
+            "function": self.controller.save_group_list,
+            "params" : ["string"]
+        },
+        {
+            # (@, at, *) [percent]
+            "pattern": "(?:@|at|\*)(\d+)",
+            "function": self.controller.last_at_list,
+            "params" : [ "int" ]
         },
     )
 
@@ -29,6 +48,7 @@ class CommandParser:
     def parseCommand(self, command):
 
         noWhite = re.sub("\s", "", command) # remove whitespace
+        noWhite = noWhite.lower() # make lower case
         for p in self.patterns:
 
             match = re.match(p["pattern"], noWhite) # match this pattern
@@ -37,7 +57,6 @@ class CommandParser:
             args = []
 
             if match and len(match.groups()) == len(params): # If the pattern matches our template
-
                 i = 1
                 for param in params: # For each parameter that we expect to find
                     toAdd = match.group(i) # If it's a string
@@ -48,10 +67,13 @@ class CommandParser:
                         toAdd = float(toAdd)
                     elif param == "range":
                         toAdd = RangeParser(toAdd)
+                    elif param == "channel_range":
+                        rng = RangeParser(toAdd)
+                        toAdd = ChannelSet(rng.set)
 
-                    # Increment i if
+                    # Increment i if we aren't skipping this one
                     if param != "skip":
                         args.append(toAdd)
                         i += 1
 
-                func(args) # Call the function
+                return func(args) # Call the function

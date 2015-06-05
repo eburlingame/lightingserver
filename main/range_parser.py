@@ -11,14 +11,16 @@ class RangeParser(object):
     regExp  = tokenExp + "(\s+)?(\d+)" # Regex pattern for or
     regThru = tokenAnd + "?" + \
               tokenExp + "?" + \
-              "(\s+)?(\d+)(\s+)?" + tokenThru + "(\s+)?(\d+)" # Regex pattern for through
+              "(\d+)" + tokenThru + "(\d+)" # Regex pattern for through
 
+    # (and|\+)?(except|-)?(\d+)(\/|thru|through)?(\d+)?
     reg = tokenAnd + "?" + tokenExp + "?" + "(\d+)" + tokenThru +"?(\d+)?"
 
     raw = ""
 
     def parseAll(self):
         noWhite = re.sub("\s", "", self.raw) # remove whitespace
+        noWhite = noWhite.lower()
         all = re.findall(self.reg, noWhite) # find all patterns
         for m in all:
             add = True
@@ -46,25 +48,6 @@ class RangeParser(object):
             else:
                 self.add(rng)
             self.raw = re.sub(self.regThru, "", self.raw) # Remove found token
-
-    def parseAnds(self):
-        allAnds = re.findall(self.regAnd, self.raw)
-        for m in allAnds:
-            self.add([ int(m[2]) ])
-            self.raw = re.sub(self.regAnd, "", self.raw) # Remove found token
-
-    def parseExcepts(self):
-        allExps = re.findall(self.regExp, self.raw)
-        for m in allExps:
-            self.remove([ int(m[2]) ])
-            self.raw = re.sub(self.regExp, "", self.raw) # Remove found token
-
-    def addLast(self):
-        m = re.match("(\d+)", self.raw)
-        if m:
-            val = int(m.group(1))
-            self.add([ val ])
-
 
     def add(self, array):
         self.set.update(set(array))

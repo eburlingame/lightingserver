@@ -30,8 +30,10 @@ class Fade:
     def start(self, newValue, time):
         self._startValue = self.value
         self._time = time
-        if newValue > 255 or newValue < 0:
-            raise Exception("Fade value outside of range")
+        if newValue > 100:
+            newValue = 100
+        elif newValue < 0:
+            newValue = 0
         self._targetValue = newValue
 
     # Updates the current running fade

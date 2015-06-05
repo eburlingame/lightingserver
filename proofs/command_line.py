@@ -17,6 +17,10 @@ def main():
     pre_commands.append( "patch channel 3 dmx 3" )
 
     pre_commands.append( "1/3 * 100" )
+    pre_commands.append( " at 0" )
+
+    pre_commands.append( "save group test " )
+    pre_commands.append( "save group test2 {1/2}" )
 
     for cmd in pre_commands:
         print ">>> " + cmd
@@ -28,7 +32,7 @@ def main():
 
 
 def runCommand(strCommand):
-    command.parseCommand(strCommand)
+    print command.parseCommand(strCommand)
     control.update()
     print control.patch.dmx
 

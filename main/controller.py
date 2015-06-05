@@ -1,6 +1,7 @@
 __author__ = 'eric'
 from patch import Patch
 from channel_set import *
+from group import *
 
 # Helper functions:
 
@@ -40,29 +41,64 @@ class Controller:
         number = int(number)
         dmx = int(dmx)
 
-        self.patch.patch_channel(number, dmx, label, dmx)
+        self.patch.patch_channel(number, dmx, label, fixture)
+        return "Patched channel %s to dmx address %s" % (number, dmx)
+
+    def save_group(self, name, channelSet):
+        self.save_group_list((name, channelSet))
+    def save_group_list(self, args):
+        name        = required_arg(args, 0, "A name must be supplied")
+        channelSet  = optional_arg(args, 1, self.lastSelected)
+
+        newGroup = Group(name, channelSet)
+        self.groups.append(newGroup)
+        return "Group %s saved with channels %s" % (name, channelSet.to_string())
+
 
 
     def range_at(self, channelRange, value):
         self.range_at_list((channelRange, value))
     def range_at_list(self, args):
-        channelRange = required_arg(args, 0, "Channel range instance must be supplied")
-        value = required_arg(args, 1, "Value must be supplied")
+        channelRange    = required_arg(args, 0, "Channel range instance must be supplied")
+        value           = required_arg(args, 1, "Value must be supplied")
+
         set = ChannelSet(channelRange.set)
+        self.lastSelected = set
         state = ChannelState()
         state.set_at(set, value)
+
         self.patch.set_channel_state(state)
+        self.update()
+        return "Set to %s " % value
+
+    def last_at(self, value):
+        self.last_at_list((value))
+    def last_at_list(self, args):
+        value   = required_arg(args, 0, "A value must be supplied")
+
+        state = ChannelState()
+        state.set_at(self.lastSelected, value)
+
+        self.patch.set_channel_state(state)
+        self.update()
+        return "Set to %s " % value
 
 
     # Takes (ChannelSet, value)
     def at(self, channelSet, value):
         self.at_list((channelSet, value))
     def at_list(self, args):
-        channelSet = required_arg(args, 0, "ChannelSet instance must be supplied")
-        value = required_arg(args, 1, "Value must be supplied")
+        channelSet  = required_arg(args, 0, "ChannelSet instance must be supplied")
+        value       = required_arg(args, 1, "Value must be supplied")
+
+        self.lastSelected = channelSet
+
         state = ChannelState()
         state.set_at(channelSet, value)
+
         self.patch.set_channel_state(state)
+        self.update()
+        return "Set to %s " % value
 
     # Util functions
 
@@ -72,3 +108,5 @@ class Controller:
 
     def __init__(self):
         self.patch = Patch()
+        self.lastSelected = ChannelSet()
+        self.groups = []
