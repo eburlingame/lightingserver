@@ -36,7 +36,6 @@ class ChannelRangeParser:
 
         self.parse()
         self.set = self.adds - self.exps
-        print self.exps
 
     def parse(self):
         noWhite = re.sub("\s", "", self.raw)  # remove whitespace
