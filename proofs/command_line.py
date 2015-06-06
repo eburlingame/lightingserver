@@ -22,6 +22,8 @@ def main():
     pre_commands.append( "save group test " )
     pre_commands.append( "save group test2 {1/2}" )
 
+    pre_commands.append( "group test except 3 * 100" )
+
     for cmd in pre_commands:
         print ">>> " + cmd
         runCommand(cmd)

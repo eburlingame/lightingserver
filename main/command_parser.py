@@ -2,6 +2,7 @@ __author__ = 'eric'
 import re
 from range_parser import *
 from channel_set import *
+from channel_range_parser import *
 from controller import Controller
 
 class CommandParser:
@@ -26,13 +27,13 @@ class CommandParser:
         },
         {
             # save (group, grp) [name] {channel selection}
-            "pattern": "(?:save)?(?:group)(.+){(.+)}",
+            "pattern": "(?:save)(?:group)(.+){(.+)}",
             "function": self.controller.save_group_list,
             "params" : ["string", "channel_range"]
         },
         {
             # save (group, grp) [name]
-            "pattern": "(?:save)?(?:group)(.+)",
+            "pattern": "(?:save)(?:group)(.+)",
             "function": self.controller.save_group_list,
             "params" : ["string"]
         },
@@ -68,7 +69,7 @@ class CommandParser:
                     elif param == "range":
                         toAdd = RangeParser(toAdd)
                     elif param == "channel_range":
-                        rng = RangeParser(toAdd)
+                        rng = ChannelRangeParser(toAdd, self.controller)
                         toAdd = ChannelSet(rng.set)
 
                     # Increment i if we aren't skipping this one
@@ -77,3 +78,4 @@ class CommandParser:
                         i += 1
 
                 return func(args) # Call the function
+        return "Didn't regonize input"
