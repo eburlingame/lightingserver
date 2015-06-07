@@ -21,9 +21,9 @@ class CommandParser:
         },
         {
             # ~Channel [Channel Selection] (@, at, *) [percent]
-            "pattern": "(?:channel)?(.+)(?:@|at|\*)(\d+)",
+            "pattern": "((?:channel)?(?:.+?)(?:@|at|\*)(?:\d+))",
             "function": self.controller.at_list,
-            "params" : ["channel_range", "int"]
+            "params" : ["channel_state"]
         },
         {
             # save (group, grp) [name] {channel selection}
@@ -55,31 +55,36 @@ class CommandParser:
             match = re.match(p["pattern"], noWhite) # match this pattern
             params = p["params"] # get the parameters
             func = p["function"] # get a reference to the function
-            args = []
-
             if match and len(match.groups()) == len(params): # If the pattern matches our template
-                i = 1
-                for param in params: # For each parameter that we expect to find
-                    toAdd = match.group(i) # If it's a string
+                try:
+                    return self.match_and_call(params, match, func)
+                except Exception, e:
+                    return "Error: " + e.message
 
-                    if param == "int":
-                        toAdd = int(toAdd)
-                    elif param == "decimal":
-                        toAdd = float(toAdd)
-                    elif param == "range":
-                        toAdd = RangeParser(toAdd)
-                    elif param == "channel_range":
-                        rng = ChannelRangeParser(toAdd, self.controller)
-                        toAdd = ChannelSet(rng.set)
-                        try:
-                            pass
-                        except Exception, e:
-                            return e.message;
 
-                    # Increment i if we aren't skipping this one
-                    if param != "skip":
-                        args.append(toAdd)
-                        i += 1
-
-                return func(args) # Call the function
         return "Didn't regonize input"
+
+    def match_and_call(self, params, match, func):
+        args = []
+        i = 1
+        for param in params: # For each parameter that we expect to find
+            toAdd = match.group(i) # If it's a string
+
+            if param == "int":
+                toAdd = int(toAdd)
+            elif param == "decimal":
+                toAdd = float(toAdd)
+            elif param == "range":
+                toAdd = RangeParser(toAdd)
+            elif param == "channel_state":
+                toAdd = ChannelState(self.controller, toAdd)
+            elif param == "channel_range":
+                rng = ChannelRangeParser(toAdd, self.controller)
+                toAdd = ChannelSet(rng.set)
+
+            # Increment i if we aren't skipping this one
+            if param != "skip":
+                args.append(toAdd)
+                i += 1
+
+        return func(args) # Call the function

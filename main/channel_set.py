@@ -1,18 +1,40 @@
 __author__ = 'eric'
+import re
+from channel_range_parser import *
 
 # Represets
 class ChannelState:
 
-    def __init__(self):
+    def __init__(self, controller, raw = ""):
         # Takes a dictionary in the form of
         # "number" : the channel's number
         # "value": the channel's value in the state
         self.states = []
+        self.controller = controller
+        if raw != "":
+            self.parse(raw)
+
+
+    reg = "(?:channel)?(.+?)(?:@|at|\*)(\d+);?"
+    def parse(self, raw):
+        self.raw = raw
+        noWhite = re.sub("\s", "", raw).lower()
+        matches = re.findall(self.reg, noWhite)
+        if matches:
+            for m in matches:
+                rng = m[0]
+                val = int(m[1])
+                channelRange = ChannelRangeParser(rng, self.controller)
+                channelSet = ChannelSet(channelRange.set)
+                self.set_at(channelSet, val)
+
 
     def get_channel_set(self):
-        channelSet = set()
+        newSet = set()
         for state in self.states:
-            channelSet += int(state.number)
+            newSet.add(int(state['number']))
+        return ChannelSet(newSet)
+
 
     def set_at(self, channelSet, value):
         for channel in channelSet.set:
