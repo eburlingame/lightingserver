@@ -41,6 +41,7 @@ class ChannelRangeParser:
         noWhite = re.sub("\s", "", self.raw)  # remove whitespace
         noWhite = noWhite.lower()
         self.match_groups(noWhite)
+        self.match_fixtures(noWhite)
 
     def match_groups(self, noWhite):
         # ((and|\+)|(except|-)|^)group(.+?)(?=(?:and|\+)|(?:except|-))
@@ -62,11 +63,60 @@ class ChannelRangeParser:
                 else:
                     self.remove(list(group.channelSet.set))
 
+    def match_fixtures(self, noWhite):
+        # ((and|\+)|(except|-)|^)group(.+?)(?=(?:and|\+)|(?:except|-))
+        reg = "((and|\+)|(except|-)|^)fixture(.+?)((?:channel)(\d+))?(?=(?=and|\+)|(?=except|-)|$)"
+        matches = re.findall(reg, noWhite)
+        if matches:
+            for match in matches:
+                add = True
+                channel = -1
+                name = match[3]
+                if match[2] != "":  # Found an "except" modifier
+                    add = False
+                if match[4] != "": # Found a channel specificed
+                    channel = int(match[5])
+
+                print name
+
+                group = self.get_channels_in_fixture(name)
+
+                if len(group) == 0:
+                    raise Exception("Fixture not found")
+
+                toAct = set()
+                if channel != -1:
+                    try:
+                        toAct = [ group[channel - 1] ]
+                    except:
+                        raise Exception("Channel not found in fixture")
+                else:
+                    toAct = group
+
+                if add:
+                    self.add(toAct)
+                else:
+                    self.remove(toAct)
+
+
     def get_group(self, name):
         for group in self.controller.groups:
             if group.name == name:
                 return group
 
+        return False
+
+    def get_channels_in_fixture(self, fixture):
+        group = []
+        for channel in self.controller.patch.channels:
+            if channel.fixture == fixture:
+                group.append(channel.number)
+        return group
+
+    def get_channel_by_label(self, name):
+        for channel in self.controller.patch.channels:
+            if channel.label == name:
+                return channel
         return False
 
     def add(self, array):

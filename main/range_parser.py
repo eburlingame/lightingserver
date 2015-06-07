@@ -36,7 +36,6 @@ class RangeParser(object):
                 self.remove(rng)
 
         self.removed = re.sub(self.reg, "", noWhite)
-        print self.removed
 
     def add(self, array):
         self.adds.update(set(array))

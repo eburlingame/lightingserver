@@ -71,6 +71,10 @@ class CommandParser:
                     elif param == "channel_range":
                         rng = ChannelRangeParser(toAdd, self.controller)
                         toAdd = ChannelSet(rng.set)
+                        try:
+                            pass
+                        except Exception, e:
+                            return e.message;
 
                     # Increment i if we aren't skipping this one
                     if param != "skip":
