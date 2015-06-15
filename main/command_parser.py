@@ -48,14 +48,14 @@ class CommandParser:
         {
             # save scene [scene name] ~fade ~[fade time] ~channel [channel selection]
             "pattern": "(?:save)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?(?:channel)(.+)",
-            "function": self.controller.save_scene_current_list,
+            "function": self.controller.save_scene_current_set_list,
             "params" : [ "string", "decimal", "channel_range" ]
         },
         {
             # save scene [scene name] ~fade ~[fade time]
             "pattern": "(?:save)(?:scene)(.+?)(?:(?:(?:fade)([\d|\.]+))?)$",
             "function": self.controller.save_scene_current_list,
-            "params" : [ "string", "int" ]
+            "params" : [ "string", "decimal" ]
         },
         {
             # list scenes

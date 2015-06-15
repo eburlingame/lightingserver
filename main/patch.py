@@ -44,6 +44,11 @@ class Patch:
 
         self.dmx = [0 for i in range(0, max)]
 
+    def get_channel_value(self, num):
+        chn = self.get_channel(num)
+        if not chn:
+            return chn.value
+        return False
 
     def get_channel(self, num):
         for chn in self.channels:

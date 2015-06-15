@@ -35,13 +35,15 @@ class ChannelState:
             newSet.add(int(state['number']))
         return ChannelSet(newSet)
 
-
-    def set_at(self, channelSet, value):
-        for channel in channelSet.set:
-            self.states.append({
+    def channel_at(self, channel, value):
+        self.states.append({
                 "number": channel,
                 "value": value
             })
+
+    def set_at(self, channelSet, value):
+        for channel in channelSet.set:
+            self.channel_at(channel, value)
 
 
 # Represents a selection of channels

@@ -49,20 +49,32 @@ class Controller:
 
     # ------------------ Scenes ----------------------
 
-    def save_scene_current_set(self, name, channelSet, fade):
-        pass
-
     def save_scene_current(self, name, fade):
         return self.save_scene_current_list((name, fade))
     def save_scene_current_list(self, args):
         name    = required_arg(args, 0, "A name must be supplied")
         fade    = optional_arg(args, 1, -1)
 
-        channelState = ChannelState(self)
+        rawSet = set()
         for channel in self.patch.channels:
             if channel.value > 0: # If the channel is above 0% it's "active"
-                channelSet = ChannelSet(set([channel.number]))
-                channelState.set_at(channelSet, channel.value)
+                rawSet.add(channel.number)
+
+        channelSet = ChannelSet(rawSet)
+        return self.save_scene_current_set(name, fade, channelSet)
+
+
+
+    def save_scene_current_set(self, name, fade, channelSet):
+        self.save_scene_current_set_list((name, fade, channelSet))
+    def save_scene_current_set_list(self, args):
+        name        = required_arg(args, 0, "A name must be supplied")
+        fade        = optional_arg(args, 1, -1)
+        channelSet  = required_arg(args, 2, "A ChannelSet must be supplied")
+
+        channelState = ChannelState(self)
+        for channel in channelSet.set:
+            channelState.channel_at(channel, self.patch.get_channel_value(channel))
 
         return self.save_scene(name, channelState, fade)
 

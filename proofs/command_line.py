@@ -19,8 +19,18 @@ def main():
     pre_commands.append( "1/3 * 100" )
     # pre_commands.append( " at 0" )
 
-    # pre_commands.append( "save group test " )
-    # pre_commands.append( "save group test2 {1/2}" )
+    pre_commands.append( "save group test " )
+    pre_commands.append( "save group test2 {1/2}" )
+
+    pre_commands.append( "save scene test " )
+
+    pre_commands.append( "list scenes " )
+
+    pre_commands.append( "save scene test2 channel 1/2 " )
+
+    pre_commands.append( "list scenes " )
+
+
 
 
     for cmd in pre_commands:
@@ -36,5 +46,6 @@ def runCommand(strCommand):
     print command.parseCommand(strCommand)
     control.update()
     print control.patch.dmx
+    print ""
 
 main()
