@@ -48,11 +48,47 @@ class Controller:
 
 
     # ------------------ Scenes ----------------------
+
+    def save_scene_current_set(self, name, channelSet, fade):
+        pass
+
+    def save_scene_current(self, name, fade):
+        return self.save_scene_current_list((name, fade))
+    def save_scene_current_list(self, args):
+        name    = required_arg(args, 0, "A name must be supplied")
+        fade    = optional_arg(args, 1, -1)
+
+        channelState = ChannelState(self)
+        for channel in self.patch.channels:
+            if channel.value > 0: # If the channel is above 0% it's "active"
+                channelSet = ChannelSet(set([channel.number]))
+                channelState.set_at(channelSet, channel.value)
+
+        return self.save_scene(name, channelState, fade)
+
+
     def save_scene(self, name, channelState, fade = -1):
+        return self.save_scene_list((name, channelState, fade))
+    def save_scene_list(self, args):
+        name            = required_arg(args, 0, "A name must be supplied")
+        channelState    = required_arg(args, 1, "A channel state must be supplied")
+        fade            = optional_arg(args, 2, -1)
+
         scene = Scene(name, channelState, fade)
+        self.scenes.append(scene)
+        return "Scene '%s' saved with %s channels" % (name, len(channelState.states))
 
 
+    def list_scenes(self):
+        return self.list_scenes_list
 
+    def list_scenes_list(self, args):
+        str = "Current Saved Scenes:\n"
+        for scene in self.scenes:
+            chnCount = len(scene.channelState.get_channel_set().set)
+            str += "\tName: %s\t\tFade time: %s\t\tChannels: %s" % (scene.name, scene.fade, chnCount)
+            str += "\n"
+        return str
 
     # ------------------ Groups ----------------------
     def save_group(self, name, channelSet):

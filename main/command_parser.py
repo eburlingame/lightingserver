@@ -43,7 +43,27 @@ class CommandParser:
             "function": self.controller.last_at_list,
             "params" : [ "int" ]
         },
-    )
+
+
+        {
+            # save scene [scene name] ~fade ~[fade time] ~channel [channel selection]
+            "pattern": "(?:save)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?(?:channel)(.+)",
+            "function": self.controller.save_scene_current_list,
+            "params" : [ "string", "decimal", "channel_range" ]
+        },
+        {
+            # save scene [scene name] ~fade ~[fade time]
+            "pattern": "(?:save)(?:scene)(.+?)(?:(?:(?:fade)([\d|\.]+))?)$",
+            "function": self.controller.save_scene_current_list,
+            "params" : [ "string", "int" ]
+        },
+        {
+            # list scenes
+            "pattern": "listscenes",
+            "function": self.controller.list_scenes_list,
+            "params" : [  ]
+        },
+        )
 
 
     def parseCommand(self, command):
@@ -56,8 +76,9 @@ class CommandParser:
             params = p["params"] # get the parameters
             func = p["function"] # get a reference to the function
             if match and len(match.groups()) == len(params): # If the pattern matches our template
+                return self.match_and_call(params, match, func)
                 try:
-                    return self.match_and_call(params, match, func)
+                    pass
                 except Exception, e:
                     return "Error: " + e.message
 
@@ -69,18 +90,18 @@ class CommandParser:
         i = 1
         for param in params: # For each parameter that we expect to find
             toAdd = match.group(i) # If it's a string
-
-            if param == "int":
-                toAdd = int(toAdd)
-            elif param == "decimal":
-                toAdd = float(toAdd)
-            elif param == "range":
-                toAdd = RangeParser(toAdd)
-            elif param == "channel_state":
-                toAdd = ChannelState(self.controller, toAdd)
-            elif param == "channel_range":
-                rng = ChannelRangeParser(toAdd, self.controller)
-                toAdd = ChannelSet(rng.set)
+            if toAdd != "" and toAdd != None:
+                if param == "int":
+                    toAdd = int(toAdd)
+                elif param == "decimal":
+                    toAdd = float(toAdd)
+                elif param == "range":
+                    toAdd = RangeParser(toAdd)
+                elif param == "channel_state":
+                    toAdd = ChannelState(self.controller, toAdd)
+                elif param == "channel_range":
+                    rng = ChannelRangeParser(toAdd, self.controller)
+                    toAdd = ChannelSet(rng.set)
 
             # Increment i if we aren't skipping this one
             if param != "skip":
