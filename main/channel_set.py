@@ -29,6 +29,9 @@ class ChannelState:
                 self.set_at(channelSet, val)
 
 
+    def get_num_channels(self):
+        return len(self.states)
+
     def get_channel_set(self):
         newSet = set()
         for state in self.states:

@@ -19,12 +19,22 @@ class CommandParser:
             "function": self.controller.patch_channel_list,
             "params" : ["int", "int", "string", "string"]
         },
+
+
         {
             # ~Channel [Channel Selection] (@, at, *) [percent]
             "pattern": "((?:channel)?(?:.+?)(?:@|at|\*)(?:\d+))",
             "function": self.controller.at_list,
             "params" : ["channel_state"]
         },
+        {
+            # (@, at, *) [percent]
+            "pattern": "^(?:@|at|\*)(\d+)",
+            "function": self.controller.last_at_list,
+            "params" : [ "int" ]
+        },
+
+
         {
             # save (group, grp) [name] {channel selection}
             "pattern": "(?:save)(?:group)(.+){(.+)}",
@@ -37,14 +47,16 @@ class CommandParser:
             "function": self.controller.save_group_list,
             "params" : ["string"]
         },
+
+
+
+
         {
-            # (@, at, *) [percent]
-            "pattern": "(?:@|at|\*)(\d+)",
-            "function": self.controller.last_at_list,
-            "params" : [ "int" ]
+            # save scene [scene name] ~fade ~[fade time] { [channel commands} }
+            "pattern": "(?:save)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?{(.+)}",
+            "function": self.controller.save_scene_list,
+            "params" : [ "string", "decimal", "channel_range" ]
         },
-
-
         {
             # save scene [scene name] ~fade ~[fade time] ~channel [channel selection]
             "pattern": "(?:save)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?(?:channel)(.+)",

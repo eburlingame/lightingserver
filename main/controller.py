@@ -31,6 +31,7 @@ class Controller:
 
 
     # ------------------ Patching ----------------------
+
     # Takes (channel number, channel value, ~label, fixture ~fixture)
     def patch_channel(self, channelNumber, channelValue, label = "", fixture = ""):
         self.patch_channel_list((channelNumber, channelValue, label, fixture))
@@ -45,6 +46,11 @@ class Controller:
 
         self.patch.patch_channel(number, dmx, label, fixture)
         return "Patched channel %s to dmx address %s" % (number, dmx)
+
+
+
+
+
 
 
     # ------------------ Scenes ----------------------
@@ -76,31 +82,44 @@ class Controller:
         for channel in channelSet.set:
             channelState.channel_at(channel, self.patch.get_channel_value(channel))
 
-        return self.save_scene(name, channelState, fade)
+        return self.save_scene(name, fade, channelState)
 
 
-    def save_scene(self, name, channelState, fade = -1):
-        return self.save_scene_list((name, channelState, fade))
+    def save_scene(self, name, fade, channelState):
+        return self.save_scene_list((name, fade, channelState))
     def save_scene_list(self, args):
         name            = required_arg(args, 0, "A name must be supplied")
-        channelState    = required_arg(args, 1, "A channel state must be supplied")
-        fade            = optional_arg(args, 2, -1)
+        fade            = optional_arg(args, 1, -1)
+        channelState    = required_arg(args, 2, "A channel state must be supplied")
 
         scene = Scene(name, channelState, fade)
+        overwrite = False
+        for scn in self.scenes:
+            if scn.name == scene.name:
+                self.scenes.remove(scn)
+                overwrite = True
+
         self.scenes.append(scene)
-        return "Scene '%s' saved with %s channels" % (name, len(channelState.states))
+        numChannels = channelState.get_num_channels()
+        if overwrite:
+            return "Scene '%s' overwritten with %s channels" % (name, numChannels)
+        else:
+            return "Scene '%s' saved with %s channels" % (name, numChannels)
 
 
     def list_scenes(self):
         return self.list_scenes_list
-
     def list_scenes_list(self, args):
         str = "Current Saved Scenes:\n"
         for scene in self.scenes:
-            chnCount = len(scene.channelState.get_channel_set().set)
-            str += "\tName: %s\t\tFade time: %s\t\tChannels: %s" % (scene.name, scene.fade, chnCount)
+            chnCount = scene.channelState.get_num_channels()
+            str += "\tName: %s\t\t\t\tFade time: %s\t\t\t\tChannels: %s" % (scene.name, scene.fade, chnCount)
             str += "\n"
         return str
+
+
+
+
 
     # ------------------ Groups ----------------------
     def save_group(self, name, channelSet):
@@ -110,8 +129,29 @@ class Controller:
         channelSet  = optional_arg(args, 1, self.lastSelected)
 
         newGroup = Group(name, channelSet)
+        overwrite = False
+        for grp in self.groups:
+            if grp.name == newGroup.name:
+                self.groups.remove(grp)
+                overwrite = True
+
         self.groups.append(newGroup)
-        return "Group %s saved with channels %s" % (name, channelSet.to_string())
+
+        if overwrite:
+            return "Group %s saved with channels %s" % (name, channelSet.to_string())
+        else:
+            return "Group %s overwritten with channels %s" % (name, channelSet.to_string())
+
+    def list_groups(self):
+        return self.list_groups_list
+    def list_groups_list(self, args):
+        str = "Current Saved Groups:\n"
+        for group in self.groups:
+            str += "\tName: %s\t\t\t\tChannels: %s" % (group.name, group.channelSet.to_string())
+            str += "\n"
+        return str
+
+
 
 
 
@@ -164,6 +204,9 @@ class Controller:
         self.at_list((channelState))
     def at_list(self, args):
         channelState  = required_arg(args, 0, "ChannelState instance must be supplied")
+
+        if channelState.get_num_channels() == 0:
+            return "No selected channels"
 
         self.lastSelected = channelState.get_channel_set()
         value = channelState.states[0]["value"]
