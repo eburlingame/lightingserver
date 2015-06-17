@@ -9,7 +9,7 @@ from ola.ClientWrapper import ClientWrapper
 
 controller = Controller()
 command = CommandParser(controller)
-dmxOut = DmxOutput(controller.patch, 0.001)
+dmxOut = DmxOutput(controller.patch, 0.01)
 
 def main():
     print "LightingServer starting..."
