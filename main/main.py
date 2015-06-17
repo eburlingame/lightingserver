@@ -20,6 +20,8 @@ def main():
         s = str(i)
         pre_commands.append( "patch channel " + s +" dmx " + s + " fixture led" )
 
+    pre_commands.append("1 * 100")
+
     for cmd in pre_commands:
         print ">>> " + cmd
         runCommand(cmd)
