@@ -28,7 +28,7 @@ class DmxOutput(object):
         universe = 1
         wrapper = ClientWrapper()
 
-        def DmxSent(state):
+        # def DmxSent(state):
             # wrapper.Stop()
 
         while True:
