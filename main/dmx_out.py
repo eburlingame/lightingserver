@@ -38,7 +38,7 @@ class DmxOutput(object):
             for val in self.patch.dmx:
                 toSend.append(int(val))
                 if val > 0:
-                    print "Setting to " % val
+                    print "Setting to %" % val
 
 
             data = array.array('B', toSend)
