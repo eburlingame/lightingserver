@@ -29,7 +29,7 @@ class DmxOutput(object):
         wrapper = ClientWrapper()
 
         def DmxSent(state):
-            wrapper.Stop()
+            # wrapper.Stop()
 
         while True:
             self.patch.update_channels(self.interval)
