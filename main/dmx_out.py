@@ -35,11 +35,14 @@ class DmxOutput(object):
             self.patch.update_channels(self.interval)
 
             toSend = []
+            i = 0
             for val in self.patch.dmx:
-                toSend.append(int(val))
-                if val > 0:
-                    print "Setting to " + str(val)
+                i += 1
+                if i == 1:
+                    if val != 255:
+                        "not 255!"
 
+                toSend.append(int(val))
 
             data = array.array('B', toSend)
             client = wrapper.Client()
