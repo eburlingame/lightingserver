@@ -28,6 +28,8 @@ class ChannelState:
                 channelSet = ChannelSet(channelRange.set)
                 self.set_at(channelSet, val)
 
+    def get_sorted_list(self):
+
 
     def get_num_channels(self):
         return len(self.states)
@@ -39,6 +41,11 @@ class ChannelState:
         return ChannelSet(newSet)
 
     def channel_at(self, channel, value):
+        # Check to see if the channel has already been saved
+        for state in self.states:
+            if channel == state["number"]:
+                self.states.remove(state)
+        # Add new channel to the end
         self.states.append({
                 "number": channel,
                 "value": value

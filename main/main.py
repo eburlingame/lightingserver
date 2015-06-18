@@ -4,9 +4,6 @@ from dmx_out import DmxOutput
 from command_parser import CommandParser
 from controller import Controller
 
-import array
-from ola.ClientWrapper import ClientWrapper
-
 controller = Controller()
 command = CommandParser(controller)
 dmxOut = DmxOutput(controller.patch, 0.01)

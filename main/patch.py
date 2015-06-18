@@ -46,7 +46,7 @@ class Patch:
 
     def get_channel_value(self, num):
         chn = self.get_channel(num)
-        if not chn:
+        if chn != False:
             return chn.value
         return False
 

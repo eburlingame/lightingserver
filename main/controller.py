@@ -55,6 +55,31 @@ class Controller:
 
     # ------------------ Scenes ----------------------
 
+    def load_scene(self, name, fade = -1):
+        return self.load_scene_list((name, fade))
+    def load_scene_list(self, args):
+        name    = required_arg(args, 0, "A scene name must be supplied")
+        fade    = optional_arg(args, 1, -1)
+
+        scn = self.find_scene(name)
+        if scn == False:
+            return "Scene not found"
+
+        toFade = self.defaultFade
+        if fade != -1 and fade != None:
+            toFade = fade
+        if scn.fade != None and scn.fade != -1:
+            toFade = scn.fade
+
+        self.patch.set_channel_state(scn.channelState, toFade)
+        return "Loading scene %s with fade %s" % (name, toFade)
+
+
+    def load_scene_channels(self):
+        pass
+    def load_scene_channels_list(self):
+        pass
+
     def save_scene_current(self, name, fade):
         return self.save_scene_current_list((name, fade))
     def save_scene_current_list(self, args):
@@ -69,10 +94,8 @@ class Controller:
         channelSet = ChannelSet(rawSet)
         return self.save_scene_current_set(name, fade, channelSet)
 
-
-
     def save_scene_current_set(self, name, fade, channelSet):
-        self.save_scene_current_set_list((name, fade, channelSet))
+        return self.save_scene_current_set_list((name, fade, channelSet))
     def save_scene_current_set_list(self, args):
         name        = required_arg(args, 0, "A name must be supplied")
         fade        = optional_arg(args, 1, -1)
@@ -94,10 +117,10 @@ class Controller:
 
         scene = Scene(name, channelState, fade)
         overwrite = False
-        for scn in self.scenes:
-            if scn.name == scene.name:
-                self.scenes.remove(scn)
-                overwrite = True
+        scn = self.find_scene(scene.name)
+        if scn != False:
+            self.scenes.remove(scn)
+            overwrite = True
 
         self.scenes.append(scene)
         numChannels = channelState.get_num_channels()
@@ -107,8 +130,18 @@ class Controller:
             return "Scene '%s' saved with %s channels" % (name, numChannels)
 
 
+    def print_scene(self, sceneName):
+        return self.print_scene_list((sceneName))
+    def print_scene_list(self, args):
+        name = required_arg(args, 0, "A name must be supplied")
+        scn = self.find_scene(name)
+        if scn == False:
+            return "Scene not found"
+        else:
+            return scn.toString()
+
     def list_scenes(self):
-        return self.list_scenes_list
+        return self.list_scenes_list()
     def list_scenes_list(self, args):
         str = "Current Saved Scenes:\n"
         for scene in self.scenes:
@@ -117,7 +150,11 @@ class Controller:
             str += "\n"
         return str
 
-
+    def find_scene(self, name):
+        for scn in self.scenes:
+            if scn.name == name:
+                return scn
+        return False
 
 
 
@@ -226,3 +263,6 @@ class Controller:
         self.lastSelected = ChannelSet()
         self.groups = []
         self.scenes = []
+
+        self.defaultFade = 3
+        self.defaultWait = 3

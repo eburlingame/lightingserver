@@ -23,7 +23,7 @@ class CommandParser:
 
         {
             # ~Channel [Channel Selection] (@, at, *) [percent]
-            "pattern": "((?:channel)?(?:.+?)(?:@|at|\*)(?:\d+))",
+            "pattern": "(^(?:channel)?(?:[^{]+?)(?:@|at|\*)(?:\d+))",
             "function": self.controller.at_list,
             "params" : ["channel_state"]
         },
@@ -43,19 +43,24 @@ class CommandParser:
         },
         {
             # save (group, grp) [name]
-            "pattern": "(?:save)(?:group)(.+)",
+            "pattern" : "(?:save)(?:group)(.+)",
             "function": self.controller.save_group_list,
-            "params" : ["string"]
+            "params"  : ["string"]
         },
 
 
 
-
+        {
+            # load scene [scene name] ~fade [~fade time]
+            "pattern": "(?:load)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?$",
+            "function": self.controller.load_scene_list,
+            "params" : [ "string", "decimal" ]
+        },
         {
             # save scene [scene name] ~fade ~[fade time] { [channel commands} }
             "pattern": "(?:save)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?{(.+)}",
             "function": self.controller.save_scene_list,
-            "params" : [ "string", "decimal", "channel_range" ]
+            "params" : [ "string", "decimal", "channel_state" ]
         },
         {
             # save scene [scene name] ~fade ~[fade time] ~channel [channel selection]
@@ -75,6 +80,12 @@ class CommandParser:
             "function": self.controller.list_scenes_list,
             "params" : [  ]
         },
+        {
+            # print scene [scene name]
+            "pattern": "printscene(.+)",
+            "function": self.controller.print_scene_list,
+            "params" : [ "string" ]
+        },
         )
 
 
@@ -88,6 +99,7 @@ class CommandParser:
             params = p["params"] # get the parameters
             func = p["function"] # get a reference to the function
             if match and len(match.groups()) == len(params): # If the pattern matches our template
+                print "Matched: " + p['pattern']
                 return self.match_and_call(params, match, func)
                 try:
                     pass
