@@ -1,3 +1,5 @@
+from channel_set import ChannelState
+
 __author__ = 'eric'
 
 class Scene:
@@ -14,6 +16,23 @@ class Scene:
             str += "\n\t\tChannel %s at %s" % (state["number"], state["value"])
         return str
 
-    def get_channel_state(self, channelSet):
+    def get_channel_state(self, controller, percent):
+        values = self.channelState.get_sorted_pairs()
+        newState = ChannelState(controller);
+        ratio = (percent / 100.0)
+        for value in values:
+            newState.channel_at(value["number"], value["value"] * ratio)
+
+        return newState
+
+    def get_custom_channel_state(self, controller, percent, channelSet):
         set = channelSet.set
-        for chann
+        values = self.channelState.get_sorted_pairs()
+        newState = ChannelState(controller)
+        ratio = (percent / 100.0)
+        i = 0
+        for channel in set:
+            newState.channel_at(channel, values[i]["value"] * ratio)
+            i = (i + 1) % len(values)
+
+        return newState

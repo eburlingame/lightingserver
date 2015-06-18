@@ -51,10 +51,16 @@ class CommandParser:
 
 
         {
+            # load scene [scene name] ~fade [~fade time] channel [channel selection]
+            "pattern": "(?:load)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?(?:%(\d+))?channel(.+)$",
+            "function": self.controller.load_scene_channels_list,
+            "params" : [ "string", "decimal", "int", "channel_range" ]
+        },
+        {
             # load scene [scene name] ~fade [~fade time]
-            "pattern": "(?:load)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?$",
+            "pattern": "(?:load)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?(?:%(\d+))?$",
             "function": self.controller.load_scene_list,
-            "params" : [ "string", "decimal" ]
+            "params" : [ "string", "decimal", "int" ]
         },
         {
             # save scene [scene name] ~fade ~[fade time] { [channel commands} }

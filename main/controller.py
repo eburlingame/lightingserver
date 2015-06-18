@@ -17,7 +17,10 @@ def required_arg(args, i, error):
 # Will get an optional argument, or return the supplied default
 def optional_arg(args, i, default):
     try:
-        return args[i]
+        if args[i] == None:
+            return default
+        else:
+            return args[i]
     except:
         return default
 
@@ -55,11 +58,12 @@ class Controller:
 
     # ------------------ Scenes ----------------------
 
-    def load_scene(self, name, fade = -1):
-        return self.load_scene_list((name, fade))
+    def load_scene(self, name, fade = -1, percent = 100):
+        return self.load_scene_list((name, fade, percent))
     def load_scene_list(self, args):
         name    = required_arg(args, 0, "A scene name must be supplied")
         fade    = optional_arg(args, 1, -1)
+        percent = optional_arg(args, 2, 100)
 
         scn = self.find_scene(name)
         if scn == False:
@@ -71,14 +75,33 @@ class Controller:
         if scn.fade != None and scn.fade != -1:
             toFade = scn.fade
 
-        self.patch.set_channel_state(scn.channelState, toFade)
+        toSet = scn.get_channel_state(self, percent)
+        self.patch.set_channel_state(toSet, toFade)
         return "Loading scene %s with fade %s" % (name, toFade)
 
 
-    def load_scene_channels(self):
-        pass
-    def load_scene_channels_list(self):
-        pass
+    def load_scene_channels(self, name, fade, percent, channelSet):
+        return self.load_scene_channels_list((name, fade, percent, channelSet))
+    def load_scene_channels_list(self, args):
+        name        = required_arg(args, 0, "A name must be supplied")
+        fade        = optional_arg(args, 1, -1)
+        percent     = optional_arg(args, 2, 100)
+        channelSet  = required_arg(args, 3, "A ChannelSet must be supplied")
+
+        scn = self.find_scene(name)
+        if scn == False:
+            return "Scene not found"
+
+        toFade = self.defaultFade
+        if fade != -1 and fade != None:
+            toFade = fade
+        if scn.fade != None and scn.fade != -1:
+            toFade = scn.fade
+
+        toSet = scn.get_custom_channel_state(self, percent, channelSet)
+        self.patch.set_channel_state(toSet, toFade)
+        return "Loading scene %s with fade %s" % (name, toFade)
+
 
     def save_scene_current(self, name, fade):
         return self.save_scene_current_list((name, fade))

@@ -1,6 +1,7 @@
 __author__ = 'eric'
 import re
 from channel_range_parser import *
+import operator
 
 # Represets
 class ChannelState:
@@ -28,8 +29,9 @@ class ChannelState:
                 channelSet = ChannelSet(channelRange.set)
                 self.set_at(channelSet, val)
 
-    def get_sorted_list(self):
-
+    # Returns the sorted pairs of channel, numbers in alist
+    def get_sorted_pairs(self):
+        return sorted(self.states, key=operator.itemgetter("number"))
 
     def get_num_channels(self):
         return len(self.states)

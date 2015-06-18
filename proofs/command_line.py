@@ -30,6 +30,8 @@ def main():
 
     pre_commands.append( "print scene test " )
 
+    pre_commands.append( "load scene test %2 ")
+
 
     for cmd in pre_commands:
         print ">>> " + cmd
