@@ -69,6 +69,11 @@ class Sequence:
         self.steps.insert(stepNumber, sequenceStep)
         self.reindex_steps()
 
+    def replace_step(self, sequenceStep, stepNumber):
+        self.delete_step(stepNumber)
+        self.insert_step(sequenceStep, stepNumber)
+        self.reindex_steps()
+
     def delete_step(self, stepNumber):
         i = 0
         for step in self.steps:
@@ -87,6 +92,15 @@ class Sequence:
     def get_step(self, number):
         return self.steps[number]
 
+    def to_string_short(self):
+        return "Sequence %s with %s steps" % (self.name, len(self.steps))
+
+    def to_string(self):
+        str = "Sequence %s \n" % self.name
+        str += "\t %s Steps:" % len(self.steps)
+        for step in self.steps:
+            str += "\n\t\t\t" + step.to_string()
+        return str
 
 
 class SequenceStep:
@@ -97,7 +111,7 @@ class SequenceStep:
         self.number = number
         self.label = label
 
-    def toString(self):
+    def to_string(self):
         str = "Step #" + self.number + ": \n"
         str += "\t Fade: %s" % self.fade
         str += "\t Wait: %s" % self.wait
@@ -125,3 +139,9 @@ class SequenceStep:
             i = (i + 1) % len(values)
 
         return newState
+
+    def to_string(self):
+        if self.label != "":
+            return "Step %s (%s): %s" % (self.number, self.label, self.channelState.to_string())
+        else:
+            return "Step %s: %s" % (self.number, self.channelState.to_string())

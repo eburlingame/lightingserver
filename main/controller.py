@@ -38,7 +38,7 @@ class Controller:
 
     # Takes (channel number, channel value, ~label, fixture ~fixture)
     def patch_channel(self, channelNumber, channelValue, label = "", fixture = ""):
-        self.patch_channel_list((channelNumber, channelValue, label, fixture))
+        return self.patch_channel_list((channelNumber, channelValue, label, fixture))
     def patch_channel_list(self, args):
         number  = required_arg(args, 0, "A name must be supplied")
         dmx     = required_arg(args, 1, "A dmx channel must be supplied")
@@ -145,7 +145,7 @@ class Controller:
 
 
     def print_scene(self, sceneName):
-        return self.print_scene_list((sceneName))
+        return self.print_scene_list(list(sceneName))
     def print_scene_list(self, args):
         name = required_arg(args, 0, "A name must be supplied")
         scn = self.find_scene(name)
@@ -174,7 +174,7 @@ class Controller:
 
     # ------------------ Groups ----------------------
     def save_group(self, name, channelSet):
-        self.save_group_list((name, channelSet))
+        return self.save_group_list((name, channelSet))
     def save_group_list(self, args):
         name        = required_arg(args, 0, "A name must be supplied")
         channelSet  = optional_arg(args, 1, self.lastSelected)
@@ -208,7 +208,7 @@ class Controller:
 
     # ------------------ Channel Control ----------------------
     def range_at(self, channelRange, value):
-        self.range_at_list((channelRange, value))
+        return self.range_at_list((channelRange, value))
     def range_at_list(self, args):
         channelRange    = required_arg(args, 0, "Channel range instance must be supplied")
         value           = required_arg(args, 1, "Value must be supplied")
@@ -223,7 +223,7 @@ class Controller:
         return "Set to %s " % value
 
     def last_at(self, value):
-        self.last_at_list((value))
+        return self.last_at_list((value))
     def last_at_list(self, args):
         value   = required_arg(args, 0, "A value must be supplied")
 
@@ -236,7 +236,7 @@ class Controller:
 
     # Takes (ChannelSet, value)
     def set_at(self, channelSet, value):
-        self.at_list((channelSet, value))
+        return self.at_list((channelSet, value))
     def set_at_list(self, args):
         channelSet  = required_arg(args, 0, "ChannelSet instance must be supplied")
         value       = required_arg(args, 1, "Value must be supplied")
@@ -250,9 +250,9 @@ class Controller:
         self.update(0.001)
         return "Set to %s " % value
 
-    # Takes (ChannelSet, value)
+    # Takes (ChannelState)
     def at(self, channelState):
-        self.at_list((channelState))
+        return self.at_list([channelState])
     def at_list(self, args):
         channelState  = required_arg(args, 0, "ChannelState instance must be supplied")
 
@@ -277,7 +277,7 @@ class Controller:
         return False
 
     def save_sequence(self, name, insert = False, step = -1, fade = -1, wait = -1, all = -1, cued = False, channelSet = None):
-        self.at_list((name, insert, step, fade, wait, all, cued, channelSet))
+        return self.save_sequence_list((name, insert, step, fade, wait, all, cued, channelSet))
     def save_sequence_list(self, args):
         name        = required_arg(args, 0, "A name must be supplied") # Name of the sequence
         insert      = optional_arg(args, 1, False) # Whether the step will be inserted
@@ -288,10 +288,11 @@ class Controller:
         cued        = optional_arg(args, 6, False) # Whether the step will be manually cued
         channelSet  = optional_arg(args, 7, None)  # The step where to insert/overwrite the scene
 
+        # Find the sequence, or make a new one
         sequence = self.get_sequence(name)
         if sequence == False:
             sequence = Sequence(name)
-            self.sequences.append(seq)
+            self.sequences.append(sequence)
             sequence = self.sequences[len(self.sequences) - 1]
 
 
@@ -300,20 +301,48 @@ class Controller:
 
         channelState = self.patch.get_current_channel_state(self, channelSet)
 
+        # If we want all the channels to be included
         if all:
             channelState = self.patch.get_all_channel_state(self)
 
-        if step == -1:
-            step = len(self.sequences) - 1
+        # If the step will be added at the end
+        stepNum = step
+        if step == -1 or step == None:
+            stepNum = len(sequence.steps)
 
+
+        # If we want the step to be advanced manually
         if cued:
             wait = -1
 
-        newStep = SequenceStep(step, name, channelState, fade, wait)
+        # Make and add the new step
+        newStep = SequenceStep(stepNum, name, channelState, fade, wait)
 
+        numChannels = channelState.get_num_channels()
         if insert:
-            sequence.
+            sequence.insert_step(newStep, stepNum)
+            return "Inserted new step #%s in sequence %s with %s channels" % (stepNum + 1, name, numChannels)
 
+        elif step != -1 and step != None:
+            sequence.replace_step(newStep, stepNum)
+            return "Replaced step #%s in sequence %s with %s channels" % (stepNum + 1, name, numChannels)
+
+        else:
+            sequence.append_step(newStep)
+            return "Added new step #%s to sequence %s with %s channels" % (stepNum + 1, name, numChannels)
+
+    def print_sequence(self, name):
+        seq = self.get_sequence(name)
+        if seq == False:
+            return "Sequence not found"
+
+        return seq.to_string()
+
+    def list_sequences(self):
+        str = "Sequences:\n"
+        for sequence in self.sequences:
+            str += "\t" + sequence.to_string_short() + "\n"
+        return str
 
 
 
