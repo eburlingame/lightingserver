@@ -17,20 +17,8 @@ def main():
     pre_commands.append( "patch channel 3 dmx 3 fixture led" )
 
     pre_commands.append( "1/3 * 100" )
-    # pre_commands.append( " at 0" )
 
-    pre_commands.append( "save group test " )
-    pre_commands.append( "save group test {1/3}" )
-    pre_commands.append( "save group test2 {1/2}" )
-    pre_commands.append( "list groups" )
 
-    pre_commands.append( "1/3 * 0" )
-    pre_commands.append( "1*100" )
-    pre_commands.append( "save scene test " )
-
-    pre_commands.append( "print scene test " )
-
-    pre_commands.append( "load scene test %2 ")
 
 
     for cmd in pre_commands:

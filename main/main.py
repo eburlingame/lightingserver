@@ -8,7 +8,7 @@ controller = Controller()
 command = CommandParser(controller)
 dmxOut = DmxOutput(controller.patch, 0.01)
 
-def main():
+def lighting_main():
     print "LightingServer starting..."
 
     pre_commands = []
@@ -36,4 +36,4 @@ def runCommand(strCommand):
     print ""
 
 
-main()
+lighting_main()

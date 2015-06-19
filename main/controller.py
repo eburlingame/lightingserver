@@ -228,7 +228,7 @@ class Controller:
         state.set_at(set, value)
 
         self.patch.set_channel_state(state)
-        self.update()
+        self.update(0.001)
         return "Set to %s " % value
 
     def last_at(self, value):
@@ -240,7 +240,7 @@ class Controller:
         state.set_at(self.lastSelected, value)
 
         self.patch.set_channel_state(state)
-        self.update()
+        self.update(0.001)
         return "Set to %s " % value
 
     # Takes (ChannelSet, value)
@@ -256,7 +256,7 @@ class Controller:
         state.set_at(channelSet, value)
 
         self.patch.set_channel_state(state)
-        self.update()
+        self.update(0.001)
         return "Set to %s " % value
 
     # Takes (ChannelSet, value)
@@ -272,13 +272,13 @@ class Controller:
         value = channelState.states[0]["value"]
 
         self.patch.set_channel_state(channelState)
-        self.update()
+        self.update(0.001)
         return "Set to %s " % value
 
 
     # ------------------ Util Functions ----------------------
-    def update(self):
-        self.patch.update_channels(1)
+    def update(self, diff):
+        self.patch.update_channels(diff)
 
 
     def __init__(self):

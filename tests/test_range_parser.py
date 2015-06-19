@@ -1,10 +1,10 @@
+
 __author__ = 'eric'
 
-import unittest
+from unittest import TestCase
+from main.range_parser import RangeParser
 
-from main.rangeParser import RangeParser
-
-class RangerParserTest(unittest.TestCase):
+class RangerParserTest(TestCase):
 
     def check_set(self, command, list):
         parser = RangeParser(command)
@@ -36,7 +36,3 @@ class RangerParserTest(unittest.TestCase):
         self.check_set("1 and 10 except 1 and 5", [5, 10])
         self.check_set("1 thru 2 and 11 and 12", [1,2,11,12])
 
-
-
-if __name__ == '__main__':
-    unittest.main()
