@@ -32,7 +32,7 @@ def main():
 
 def runCommand(strCommand):
     print command.parseCommand(strCommand)
-    control.update()
+    control.update(1)
     print control.patch.dmx
     print ""
 

@@ -69,7 +69,7 @@ class SequenceTest(TestCase):
         sequence.append_step(step2)
         sequence.append_step(step3)
 
-        print controller.patch.dmx
+        # print controller.patch.dmx
 
         runner = SequenceRunner(controller, 0, sequence)
 
@@ -87,7 +87,7 @@ class SequenceTest(TestCase):
         runner.update(1); controller.update(1)
         runner.update(1); controller.update(1)
 
-        print controller.patch.dmx
+        # print controller.patch.dmx
 
         self.assertEquals(127.5, controller.patch.dmx[0])
         self.assertEquals(127.5, controller.patch.dmx[1])

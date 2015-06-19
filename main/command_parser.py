@@ -10,9 +10,11 @@ class CommandParser:
     There is a method for every major command that can be entered on the command line
     (except some utility commands). """
 
+    # ------------------ Commmand Patterns ----------------------
     def __init__(self, controller):
         self.controller = controller
         self.patterns = (
+        # Patching
         {
             # patch channel [channel number] dmx [dmx address] ~fixture ~[fixture] ~label ~[label]
             "pattern": "(?:patch)(?:channel)(\d+)(?:dmx)(\d+)(?:fixture)?(\d+)?(?:label)?(\w+)?",
@@ -21,6 +23,7 @@ class CommandParser:
         },
 
 
+        # Channel Control
         {
             # ~Channel [Channel Selection] (@, at, *) [percent]
             "pattern": "(^(?:channel)?(?:[^{]+?)(?:@|at|\*)(?:\d+))",
@@ -35,6 +38,7 @@ class CommandParser:
         },
 
 
+        # Groups
         {
             # save (group, grp) [name] {channel selection}
             "pattern": "(?:save)(?:group)(.+){(.+)}",
@@ -49,7 +53,7 @@ class CommandParser:
         },
 
 
-
+        # Scenes
         {
             # load scene [scene name] ~fade [~fade time] channel [channel selection]
             "pattern": "(?:load)(?:scene)(.+?)(?:(?:fade)([\d|\.]+))?(?:%(\d+))?channel(.+)$",
@@ -92,9 +96,21 @@ class CommandParser:
             "function": self.controller.print_scene_list,
             "params" : [ "string" ]
         },
+
+
+        # Sequences
+        {
+            # save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time]
+            # ~wait [~wait time] ~all ~cued ~channel ~[channel selection]
+            "pattern": self.parse_save_sequence,
+            "params" : [ "string", "string", "channel_range" ]
+        },
+
+
         )
 
 
+    # ------------------ Parsing and Calling Commands ----------------------
     def parseCommand(self, command):
 
         noWhite = re.sub("\s", "", command) # remove whitespace
@@ -139,3 +155,11 @@ class CommandParser:
                 i += 1
 
         return func(args) # Call the function
+
+
+
+
+    # ------------------ Custom Parsing Functions ----------------------
+
+    def parse_save_sequence(self, name, optionsStr, channelSet):
+        

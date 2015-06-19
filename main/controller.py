@@ -3,11 +3,12 @@ from patch import Patch
 from channel_set import *
 from group import *
 from scene import *
+from sequence import *
 
 # Helper functions:
 
 # Both functions get the argument in args at the ith position
-# Will get a required argument, or raise an Excpetion with message error
+# Will get a required argument, or raise an Exception with message error
 def required_arg(args, i, error):
     try:
         return args[i]
@@ -49,10 +50,6 @@ class Controller:
 
         self.patch.patch_channel(number, dmx, label, fixture)
         return "Patched channel %s to dmx address %s" % (number, dmx)
-
-
-
-
 
 
 
@@ -109,12 +106,8 @@ class Controller:
         name    = required_arg(args, 0, "A name must be supplied")
         fade    = optional_arg(args, 1, -1)
 
-        rawSet = set()
-        for channel in self.patch.channels:
-            if channel.value > 0: # If the channel is above 0% it's "active"
-                rawSet.add(channel.number)
+        channelSet = self.patch.get_active_channel_set()
 
-        channelSet = ChannelSet(rawSet)
         return self.save_scene_current_set(name, fade, channelSet)
 
     def save_scene_current_set(self, name, fade, channelSet):
@@ -124,9 +117,7 @@ class Controller:
         fade        = optional_arg(args, 1, -1)
         channelSet  = required_arg(args, 2, "A ChannelSet must be supplied")
 
-        channelState = ChannelState(self)
-        for channel in channelSet.set:
-            channelState.channel_at(channel, self.patch.get_channel_value(channel))
+        channelState = self.patch.get_current_channel_state(self, channelSet)
 
         return self.save_scene(name, fade, channelState)
 
@@ -276,6 +267,56 @@ class Controller:
         return "Set to %s " % value
 
 
+
+    # ------------------ Sequences ----------------------
+
+    def get_sequence(self, name):
+        for sequence in self.sequences:
+            if sequence.name == name:
+                return sequence
+        return False
+
+    def save_sequence(self, name, insert = False, step = -1, fade = -1, wait = -1, all = -1, cued = False, channelSet = None):
+        self.at_list((name, insert, step, fade, wait, all, cued, channelSet))
+    def save_sequence_list(self, args):
+        name        = required_arg(args, 0, "A name must be supplied") # Name of the sequence
+        insert      = optional_arg(args, 1, False) # Whether the step will be inserted
+        step        = optional_arg(args, 2, -1)    # The step where to insert/overwrite the scene
+        fade        = optional_arg(args, 3, -1)    # The fade time of the step
+        wait        = optional_arg(args, 4, -1)    # The wait time of the step
+        all         = optional_arg(args, 5, False) # Whether all channels should be included
+        cued        = optional_arg(args, 6, False) # Whether the step will be manually cued
+        channelSet  = optional_arg(args, 7, None)  # The step where to insert/overwrite the scene
+
+        sequence = self.get_sequence(name)
+        if sequence == False:
+            sequence = Sequence(name)
+            self.sequences.append(seq)
+            sequence = self.sequences[len(self.sequences) - 1]
+
+
+        if channelSet == None:
+            channelSet = self.patch.get_active_channel_set(self)
+
+        channelState = self.patch.get_current_channel_state(self, channelSet)
+
+        if all:
+            channelState = self.patch.get_all_channel_state(self)
+
+        if step == -1:
+            step = len(self.sequences) - 1
+
+        if cued:
+            wait = -1
+
+        newStep = SequenceStep(step, name, channelState, fade, wait)
+
+        if insert:
+            sequence.
+
+
+
+
     # ------------------ Util Functions ----------------------
     def update(self, diff):
         self.patch.update_channels(diff)
@@ -283,9 +324,11 @@ class Controller:
 
     def __init__(self):
         self.patch = Patch()
-        self.lastSelected = ChannelSet()
-        self.groups = []
-        self.scenes = []
+        self.lastSelected       = ChannelSet()
+        self.groups             = []
+        self.scenes             = []
+        self.sequences          = []
+        self.sequenceRunners    = []
 
         self.defaultFade = 3
         self.defaultWait = 3

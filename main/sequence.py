@@ -53,6 +53,8 @@ class SequenceRunner:
             return self.wait
         return self.sequence.get_step(self.currentStep).wait
 
+
+
 class Sequence:
 
     def __init__(self, name):
@@ -84,6 +86,8 @@ class Sequence:
 
     def get_step(self, number):
         return self.steps[number]
+
+
 
 class SequenceStep:
     def __init__(self, number, label, channelState, fade = -1, wait = -1):
