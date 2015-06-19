@@ -93,5 +93,76 @@ class SequenceTest(TestCase):
         self.assertEquals(127.5, controller.patch.dmx[1])
         self.assertEquals(0, controller.patch.dmx[2])
 
+    def test_save_sequence(self):
+        controller = Controller()
+
+        controller.patch_channel(1, 1)
+        controller.patch_channel(2, 2)
+        controller.patch_channel(3, 3)
+
+        print controller.at(ChannelState(controller, "1 at 100"))
+        print controller.patch.dmx
+        # name, insert = False, step = -1, fade = -1, wait = -1, all = False, cued = False, channelSet = None
+        print controller.save_sequence("Test")
+
+        self.assertEquals(1, len(controller.sequences))
+        self.assertEquals(1, len(controller.sequences[0].steps))
+        self.assertEquals(1, controller.sequences[0].steps[0].channelState.get_num_channels())
+        self.assertEquals(-1, controller.sequences[0].steps[0].fade)
+        self.assertEquals(-1, controller.sequences[0].steps[0].wait)
+        self.assertEquals(0, controller.sequences[0].steps[0].number)
+        self.assertEquals("Test", controller.sequences[0].steps[0].label)
+
+        print controller.save_sequence("Test", False, -1, 10, 5)
+
+        self.assertEquals(1, len(controller.sequences))
+        self.assertEquals(2, len(controller.sequences[0].steps))
+        self.assertEquals(1, controller.sequences[0].steps[1].channelState.get_num_channels())
+        self.assertEquals(10, controller.sequences[0].steps[1].fade)
+        self.assertEquals(5, controller.sequences[0].steps[1].wait)
+        self.assertEquals(1, controller.sequences[0].steps[1].number)
+        self.assertEquals("Test", controller.sequences[0].steps[1].label)
+
+
+        # With "All" flag
+        print controller.save_sequence("test", False, -1, 1, 2, True)
+
+        self.assertEquals(2, len(controller.sequences))
+        self.assertEquals(1, len(controller.sequences[1].steps))
+        self.assertEquals(3, controller.sequences[1].steps[0].channelState.get_num_channels())
+        self.assertEquals(1, controller.sequences[1].steps[0].fade)
+        self.assertEquals(2, controller.sequences[1].steps[0].wait)
+        self.assertEquals(0, controller.sequences[1].steps[0].number)
+        self.assertEquals("test", controller.sequences[1].steps[0].label)
+
+        # With "cued" flag
+        print controller.save_sequence("test", False, -1, 1, 2, False, True)
+
+        self.assertEquals(2, len(controller.sequences))
+        self.assertEquals(2, len(controller.sequences[1].steps))
+        self.assertEquals(1, controller.sequences[1].steps[1].channelState.get_num_channels())
+        self.assertEquals(1, controller.sequences[1].steps[1].fade)
+        self.assertEquals(-1, controller.sequences[1].steps[1].wait)
+        self.assertEquals(1, controller.sequences[1].steps[1].number)
+        self.assertEquals("test", controller.sequences[1].steps[1].label)
+
+        # With custom channel set
+        channelSet = ChannelSet({2, 3})
+        print controller.save_sequence("test", False, -1, -1, -1, False, False, channelSet)
+
+        self.assertEquals(2, len(controller.sequences))
+        self.assertEquals(3, len(controller.sequences[1].steps))
+        self.assertEquals(2, controller.sequences[1].steps[2].channelState.get_num_channels())
+        self.assertEquals(-1, controller.sequences[1].steps[2].fade)
+        self.assertEquals(-1, controller.sequences[1].steps[2].wait)
+        self.assertEquals(2, controller.sequences[1].steps[2].number)
+        self.assertEquals("test", controller.sequences[1].steps[2].label)
+
+        print controller.list_sequences()
+
+        print controller.print_sequence("Test")
+        print controller.print_sequence("test")
+
+
 
 

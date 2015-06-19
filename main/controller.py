@@ -34,6 +34,8 @@ class Controller:
 
 
 
+
+
     # ------------------ Patching ----------------------
 
     # Takes (channel number, channel value, ~label, fixture ~fixture)
@@ -50,6 +52,8 @@ class Controller:
 
         self.patch.patch_channel(number, dmx, label, fixture)
         return "Patched channel %s to dmx address %s" % (number, dmx)
+
+
 
 
 
@@ -172,6 +176,8 @@ class Controller:
 
 
 
+
+
     # ------------------ Groups ----------------------
     def save_group(self, name, channelSet):
         return self.save_group_list((name, channelSet))
@@ -268,6 +274,8 @@ class Controller:
 
 
 
+
+
     # ------------------ Sequences ----------------------
 
     def get_sequence(self, name):
@@ -276,7 +284,28 @@ class Controller:
                 return sequence
         return False
 
-    def save_sequence(self, name, insert = False, step = -1, fade = -1, wait = -1, all = -1, cued = False, channelSet = None):
+    def load_sequence(self, name, percent = 100, fade = -1, wait = -1, step = -1, cued = False, channelSet = None):
+        self.load_sequence_list((name, percent, fade, wait, step, cued, channelSet))
+    def load_sequence_list(self, args):
+        name        = required_arg(args, 0, "A name must be supplied") # Name of the sequence
+        percent     = optional_arg(args, 1, 100)
+        fade        = optional_arg(args, 2, -1)
+        wait        = optional_arg(args, 3, -1)
+        step        = optional_arg(args, 4, 0)
+        cued        = optional_arg(args, 5, False)
+        channelSet  = optional_arg(args, 6, None)
+
+        sequence = self.get_sequence(name)
+        if sequence == False:
+            return "Sequence not found"
+
+        runner = SequenceRunner(self, 0, sequence, channelSet, percent, fade, wait, step)
+        self.sequenceRunners.append(runner)
+
+
+
+    def save_sequence(self, name, insert = False, step = -1, fade = -1,
+                            wait = -1, all = False, cued = False, channelSet = None):
         return self.save_sequence_list((name, insert, step, fade, wait, all, cued, channelSet))
     def save_sequence_list(self, args):
         name        = required_arg(args, 0, "A name must be supplied") # Name of the sequence
@@ -302,7 +331,7 @@ class Controller:
         channelState = self.patch.get_current_channel_state(self, channelSet)
 
         # If we want all the channels to be included
-        if all:
+        if all == True:
             channelState = self.patch.get_all_channel_state(self)
 
         # If the step will be added at the end
@@ -338,16 +367,15 @@ class Controller:
 
         return seq.to_string()
 
-    def list_sequences(self):
-        str = "Sequences:\n"
-        for sequence in self.sequences:
-            str += "\t" + sequence.to_string_short() + "\n"
-        return str
+
+
 
 
 
     # ------------------ Util Functions ----------------------
     def update(self, diff):
+        for runner in self.sequenceRunners:
+            runner.update(diff)
         self.patch.update_channels(diff)
 
 

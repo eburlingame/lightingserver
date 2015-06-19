@@ -141,7 +141,4 @@ class SequenceStep:
         return newState
 
     def to_string(self):
-        if self.label != "":
-            return "Step %s (%s): %s" % (self.number, self.label, self.channelState.to_string())
-        else:
-            return "Step %s: %s" % (self.number, self.channelState.to_string())
+        return "Step %s (Fade: %s, Wait: %s): %s" % (self.number, self.fade, self.wait, self.channelState.to_string())
