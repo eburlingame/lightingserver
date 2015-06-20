@@ -1,4 +1,4 @@
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 import re
 from range_parser import *
 from channel_set import *
@@ -101,13 +101,13 @@ class CommandParser:
         # Sequences
         {
             # load sequence [sequence name] ~fade [~fade time] ~wait [~wait time] ~step ~[step number] ~(cued)
-            "pattern": "loadsequence(.+)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?channel(.+?)$",
+            "pattern": "loadsequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?channel(.+?)$",
             "function": self.parse_load_sequence_channel_set,
-            "params" : [ "string", "string", "channel_set" ]
+            "params" : [ "string", "string", "channel_range" ]
         },
         {
             # load sequence [sequence name] ~fade [~fade time] ~wait [~wait time] ~step ~[step number] ~(cued)
-            "pattern": "loadsequence(.+)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?$",
+            "pattern": "loadsequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?$",
             "function": self.parse_load_sequence,
             "params" : [ "string", "string" ]
         },
@@ -338,9 +338,9 @@ class CommandParser:
         # cued = False
         # percent = 100
         return {
-        "fade"    : self.match_first("fade([\d|\.]+)", optionsStr, -1),
+        "fade"    : self.match_first("fade([\d|\.]+)", optionsStr, -1, float),
         "wait"    : self.match_first("wait([\d|\.]+)", optionsStr, -1, float),
-        "step"    : self.match_first("step(\d+)", optionsStr, -1, float),
+        "step"    : self.match_first("step(\d+)", optionsStr, 0),
         "repeat"  : self.match_first("repeat", optionsStr, True),
         "all"     : self.match_first("all", optionsStr, False),
         "cued"    : self.match_first("cued", optionsStr, False),

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from main.patch import Patch
 
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 
 class TestPatch(TestCase):

@@ -1,4 +1,4 @@
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 from channel import Channel
 from channel_set import *

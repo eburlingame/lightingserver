@@ -1,5 +1,5 @@
 
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 from unittest import TestCase
 from main.range_parser import RangeParser

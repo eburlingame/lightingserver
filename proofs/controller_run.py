@@ -1,4 +1,4 @@
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 from main.controller import Controller
 from main.channel_set import *

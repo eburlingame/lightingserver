@@ -1,7 +1,7 @@
 from unittest import TestCase
 from main.channel import *
 
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 
 class TestChannel(TestCase):

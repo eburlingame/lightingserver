@@ -1,6 +1,6 @@
 from channel_set import ChannelState
 
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 class Scene:
 
