@@ -6,7 +6,7 @@ from controller import Controller
 
 controller = Controller()
 command = CommandParser(controller)
-dmxOut = DmxOutput(controller, 0.05)
+dmxOut = DmxOutput(controller)
 
 def lighting_main():
     print "LightingServer starting..."
@@ -17,11 +17,11 @@ def lighting_main():
         s = str(i)
         pre_commands.append( "patch channel " + s +" dmx " + s + " fixture led" )
 
-    pre_commands.append("save sequence test wait 0.5 fade 0.5 { 1 * 100}")
-    pre_commands.append("save sequence test wait 0.5 fade 0.5 { 1 * 0  }")
+    pre_commands.append("save sequence test wait 1 fade 0 { 1 * 100; 2 * 0     }")
+    pre_commands.append("save sequence test wait 1 fade 0 { 1 * 0  ; 2 * 100   }")
 
     pre_commands.append("print sequence test")
-    pre_commands.append("load sequence test")
+    pre_commands.append("load sequence test wait 2 fade 5 step 1 channel 1/4")
 
     for cmd in pre_commands:
         print ">>> " + cmd
@@ -30,7 +30,6 @@ def lighting_main():
     while cmd != "quit":
         cmd = raw_input(">>> ")
         runCommand(cmd)
-        dmxOut.run()
 
 
 def runCommand(strCommand):

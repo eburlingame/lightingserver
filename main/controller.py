@@ -1,4 +1,4 @@
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 from patch import Patch
 from channel_set import *
 from group import *
@@ -294,14 +294,13 @@ class Controller:
         step        = optional_arg(args, 4, 0)
         cued        = optional_arg(args, 5, False)
         channelSet  = optional_arg(args, 6, None)
-
+        print "FADE: %s" % fade
         sequence = self.get_sequence(name)
         if sequence == False:
             return "Sequence not found"
 
         # controller, id, sequence, channelSet = None, percent = 100,
         # cued = False, fade = -1, wait = -1, step = 0, repeat = True
-        print "STEP: %s" % step
         runner = SequenceRunner(self, 0, sequence, channelSet, percent, cued, fade, wait, step)
         self.sequenceRunners.append(runner)
         return "Loaded sequence %s " % name
@@ -347,7 +346,6 @@ class Controller:
         if step == -1 or step == None:
             stepNum = len(sequence.steps)
 
-        print "Step: %s" % step
         # If we want the step to be advanced manually
         if cued:
             wait = -1

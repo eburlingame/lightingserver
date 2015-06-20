@@ -1,6 +1,6 @@
 from channel_set import ChannelState
 
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 class SequenceRunner:
 
@@ -22,55 +22,68 @@ class SequenceRunner:
         self.currentStep = step
         self.paused = False
         self.elapsed = 0
+        self.elapsedTotal = self.get_fade() + self.get_wait()
 
         self.advance_step()
 
 
     # Takes the difference in time since last update in seconds
     def update(self, diff):
-        print self.elapsed
         if not self.paused:
             self.elapsed += diff
-            total = self.get_fade() + self.get_wait()
 
-            if self.get_wait() == -1:
-                total = self.get_fade()
-
-            if self.cued == False and self.get_wait() != -1:
-                if self.elapsed >= total:
+            if self.cued == False:
+                if self.elapsed >= self.elapsedTotal:
                     self.advance_step()
 
     def advance_step(self):
         if self.done:
             return
         toSet = None
+        # Fade up this step
+        self.fade_step()
+        self.currentStep += 1
+        self.elapsed = 0
+        if self.currentStep >= len(self.sequence.steps):
+            if self.repeat:
+                self.currentStep = 0
+            else:
+                self.done = True
+
+    def fade_step(self):
         step = self.sequence.steps[self.currentStep]
         # Apply the channel set to the saved sequence step, if supplied
         if self.channelSet == None:
             toSet = step.get_channel_state(self.controller, self.percent)
         else:
             toSet = step.get_custom_channel_state(self.controller, self.percent, self.channelSet)
-        print "Setting step %s" % self.currentStep
+        # print "Setting step %s" % self.currentStep
+        print "Setting step %s fade %s " % (self.currentStep, self.get_fade())
         self.patch.set_channel_state(toSet, self.get_fade())
-        self.currentStep += 1
-        print "Total steps %s" % len(self.sequence.steps)
-        self.elapsed = 0
-        if self.currentStep >= len(self.sequence.steps):
-            if self.repeat:
-                self.currentStep = 0
-                print "Restarting"
-            else:
-                self.done = True
+        # Set the total elapsed so we will wait the correct amount for this step
+        self.elapsedTotal = self.get_fade() + self.get_wait()
 
     def get_fade(self):
-        if self.fade != -1:
-            return self.fade
-        return self.sequence.get_step(self.currentStep).fade
+        ourFade = self.fade
+        stepFade = self.sequence.get_step(self.currentStep).fade
+        default = self.controller.defaultFade
+        if ourFade != -1:
+            return ourFade
+        elif stepFade != -1:
+            return stepFade
+        else:
+            return default
 
     def get_wait(self):
-        if self.wait != -1:
-            return self.wait
-        return self.sequence.get_step(self.currentStep).wait
+        ourWait = self.wait
+        stepWait = self.sequence.get_step(self.currentStep).wait
+        default = self.controller.defaultWait
+        if self.fade != -1:
+            return ourWait
+        elif stepWait != -1:
+            return stepWait
+        else:
+            return default
 
 
 

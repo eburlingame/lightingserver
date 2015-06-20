@@ -1,11 +1,11 @@
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 
 import threading
 import time
 import array
 from ola.ClientWrapper import ClientWrapper
 
-
+OFFSET = 0.00001
 class DmxOutput(object):
     """ Threading example class
 
@@ -33,7 +33,7 @@ class DmxOutput(object):
         elapsed = 0.01
         while True:
             start = time.time()
-            self.controller.update(elapsed)
+            self.controller.update(elapsed + OFFSET)
 
             toSend = []
             i = 0

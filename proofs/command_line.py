@@ -1,4 +1,4 @@
-__author__ = 'eric'
+__author__ = 'Eric Burlingame'
 import re
 from main.range_parser import RangeParser
 from main.command_parser import CommandParser
@@ -19,14 +19,11 @@ def main():
     pre_commands.append( "1*100" )
 
 
-    pre_commands.append( "save sequence test wait 1 fade 1 { 1/2 * 100 }" )
-    pre_commands.append( "save sequence test wait 1 fade 1 { 1/2 * 0   } " )
+    pre_commands.append("save sequence test wait 1 fade 1 { 1 * 100}")
+    pre_commands.append("save sequence test wait 1 fade 1 { 1 * 0  }")
 
-
-    pre_commands.append( "print sequence test" )
-
-    pre_commands.append( "load sequence test" )
-
+    pre_commands.append("print sequence test")
+    pre_commands.append("load sequence test channel 2")
 
 
 
