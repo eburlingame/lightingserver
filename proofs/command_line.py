@@ -16,7 +16,16 @@ def main():
     pre_commands.append( "patch channel 2 dmx 2 fixture led" )
     pre_commands.append( "patch channel 3 dmx 3 fixture led" )
 
-    pre_commands.append( "1/3 * 100" )
+    pre_commands.append( "1*100" )
+
+
+    pre_commands.append( "save sequence test wait 1 fade 1 { 1/2 * 100 }" )
+    pre_commands.append( "save sequence test wait 1 fade 1 { 1/2 * 0   } " )
+
+
+    pre_commands.append( "print sequence test" )
+
+    pre_commands.append( "load sequence test" )
 
 
 

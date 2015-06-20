@@ -100,10 +100,49 @@ class CommandParser:
 
         # Sequences
         {
+            # load sequence [sequence name] ~fade [~fade time] ~wait [~wait time] ~step ~[step number] ~(cued)
+            "pattern": "loadsequence(.+)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?channel(.+?)$",
+            "function": self.parse_load_sequence_channel_set,
+            "params" : [ "string", "string", "channel_set" ]
+        },
+        {
+            # load sequence [sequence name] ~fade [~fade time] ~wait [~wait time] ~step ~[step number] ~(cued)
+            "pattern": "loadsequence(.+)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?$",
+            "function": self.parse_load_sequence,
+            "params" : [ "string", "string" ]
+        },
+        {
+            # save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time]
+            # ~wait [~wait time] ~all ~cued { [channel commands] }
+            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?{(.+?)}$",
+            "function": self.parse_save_sequence_channel_state,
+            "params" : [ "string", "string", "channel_state" ]
+        },
+        {
             # save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time]
             # ~wait [~wait time] ~all ~cued ~channel ~[channel selection]
-            "pattern": self.parse_save_sequence,
+            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?channel(.+?)$",
+            "function": self.parse_save_sequence_channel_set,
             "params" : [ "string", "string", "channel_range" ]
+        },
+        {
+            # save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time]
+            # ~wait [~wait time] ~all ~cued
+            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?$",
+            "function": self.parse_save_sequence,
+            "params" : [ "string", "string" ]
+        },
+        {
+            # print sequence [sequence name]
+            "pattern": "printsequence(.+)",
+            "function": self.controller.print_sequence_list,
+            "params" : [ "string" ]
+        },
+        {
+            # list sequences
+            "pattern": "listsequences",
+            "function": self.controller.list_sequences_list,
+            "params" : [  ]
         },
 
 
@@ -121,7 +160,7 @@ class CommandParser:
             params = p["params"] # get the parameters
             func = p["function"] # get a reference to the function
             if match and len(match.groups()) == len(params): # If the pattern matches our template
-                print "Matched: " + p['pattern']
+                # print "Matched: " + p['pattern']
                 return self.match_and_call(params, match, func)
                 try:
                     pass
@@ -154,6 +193,7 @@ class CommandParser:
                 args.append(toAdd)
                 i += 1
 
+        # print "Args %s " % args
         return func(args) # Call the function
 
 
@@ -161,5 +201,201 @@ class CommandParser:
 
     # ------------------ Custom Parsing Functions ----------------------
 
-    def parse_save_sequence(self, name, optionsStr, channelSet):
-        
+    # Takes a (name, optionsStr, channelSet) as args
+    def parse_load_sequence_channel_set(self, args):
+        name            = args[0]
+        optionsStr      = args[1]
+        channelSet      = args[2]
+
+        if args[1] == None:
+            optionsStr = ""
+
+        opt = self.parse_load_options_string(optionsStr)
+
+        # (name, percent, fade, wait, step, cued, channelSet)
+        return self.controller.load_sequence(name,
+                                             opt["percent"],
+                                             opt["fade"],
+                                             opt["wait"],
+                                             opt["step"],
+                                             opt["cued"],
+                                             channelSet)
+    # Takes a (name, optionsStr) as args
+    def parse_load_sequence(self, args):
+        name            = args[0]
+        optionsStr      = args[1]
+
+        if args[1] == None:
+            optionsStr = ""
+
+        opt = self.parse_load_options_string(optionsStr)
+
+        # (name, percent, fade, wait, step, cued, channelSet)
+        return self.controller.load_sequence(name,
+                                             opt["percent"],
+                                             opt["fade"],
+                                             opt["wait"],
+                                             opt["step"],
+                                             opt["cued"])
+
+
+    # Takes (name, optionsStr, channelState) as args
+    def parse_save_sequence_channel_state(self, args):
+        name            = args[0]
+        optionsStr      = args[1]
+        channelState    = args[2]
+
+        if args[1] == None:
+            optionsStr = ""
+        if args[2] == None:
+            return self.parse_save_sequence(args)
+
+        opt = self.parse_save_options_string(optionsStr)
+
+        # (self, name, insert = False, step = -1, fade = -1, wait = -1,
+        #        repeat = False, all = False, cued = False, channelSet = None)
+        return self.controller.save_sequence(name,
+                                             opt["insert"],
+                                             opt["step"],
+                                             opt["fade"],
+                                             opt["wait"],
+                                             opt["repeat"],
+                                             opt["all"],
+                                             opt["cued"],
+                                             None, channelState)
+
+    # Takes (name, optionsStr, channelSet) as args
+    def parse_save_sequence_channel_set(self, args):
+        name            = args[0]
+        optionsStr      = args[1]
+        channelSet      = args[2]
+
+        if args[1] == None:
+            optionsStr = ""
+        if args[2] == None:
+            return self.parse_save_sequence(args)
+
+        opt = self.parse_save_options_string(optionsStr)
+
+
+        # (self, name, insert = False, step = -1, fade = -1, wait = -1,
+        #        repeat = False, all = False, cued = False, channelSet = None)
+        return self.controller.save_sequence(name,
+                                             opt["insert"],
+                                             opt["step"],
+                                             opt["fade"],
+                                             opt["wait"],
+                                             opt["repeat"],
+                                             opt["all"],
+                                             opt["cued"],
+                                             channelSet)
+
+    # Takes (name, optionsStr) as args
+    def parse_save_sequence(self, args):
+        name            = args[0]
+        optionsStr      = args[1]
+        if args[1] == None:
+            optionsStr = ""
+
+        opt = self.parse_save_options_string(optionsStr)
+
+
+        # (self, name, insert = False, step = -1, fade = -1, wait = -1,
+        #        repeat = False, all = False, cued = False, channelSet = None)
+        return self.controller.save_sequence(name,
+                                             opt["insert"],
+                                             opt["step"],
+                                             opt["fade"],
+                                             opt["wait"],
+                                             opt["repeat"],
+                                             opt["all"],
+                                             opt["cued"])
+
+
+    def parse_save_options_string(self, optionsStr):
+        # insert = False
+        # step = -1
+        # fade = -1
+        # wait = -1
+        # repeat = True
+        # all = False
+        # cued = False
+        return {
+        "insert" : self.match_first("insert", optionsStr, False),
+        "step"   : self.match_first("step(\d+)", optionsStr, -1),
+        "fade"   : self.match_first("fade([\d|\.]+)", optionsStr, -1, float),
+        "wait"   : self.match_first("wait([\d|\.]+)", optionsStr, -1, float),
+        "repeat" : self.match_first("repeat", optionsStr, True),
+        "all"    : self.match_first("all", optionsStr, False),
+        "cued"   : self.match_first("cued", optionsStr, False)
+        }
+
+    def parse_load_options_string(self, optionsStr):
+        # fade = -1
+        # wait = -1
+        # repeat = True
+        # all = False
+        # cued = False
+        # percent = 100
+        return {
+        "fade"    : self.match_first("fade([\d|\.]+)", optionsStr, -1),
+        "wait"    : self.match_first("wait([\d|\.]+)", optionsStr, -1, float),
+        "step"    : self.match_first("step(\d+)", optionsStr, -1, float),
+        "repeat"  : self.match_first("repeat", optionsStr, True),
+        "all"     : self.match_first("all", optionsStr, False),
+        "cued"    : self.match_first("cued", optionsStr, False),
+        "percent" : self.match_first("%(\d+)", optionsStr, 100)
+        }
+
+    def match_first(self, pattern, string, default, typeFunc = int):
+        match = re.search(pattern, string)
+        if match:
+            if len(match.groups()) > 0:
+                return typeFunc(match.group(1))
+            return True
+        else:
+            return default
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

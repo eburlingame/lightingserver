@@ -4,7 +4,8 @@ __author__ = 'eric'
 
 class SequenceRunner:
 
-    def __init__(self, controller, id, sequence, channelSet = None, percent = 100, fade = -1, wait = -1, step = 0):
+    def __init__(self, controller, id, sequence, channelSet = None, percent = 100,
+                 cued = False, fade = -1, wait = -1, step = 0, repeat = True):
         self.controller = controller
         self.patch = controller.patch
 
@@ -12,8 +13,11 @@ class SequenceRunner:
         self.sequence = sequence
         self.channelSet = channelSet
         self.percent = percent
+        self.cued = cued
         self.fade = fade
         self.wait = wait
+        self.repeat = repeat
+        self.done = False
 
         self.currentStep = step
         self.paused = False
@@ -24,14 +28,21 @@ class SequenceRunner:
 
     # Takes the difference in time since last update in seconds
     def update(self, diff):
+        print self.elapsed
         if not self.paused:
             self.elapsed += diff
             total = self.get_fade() + self.get_wait()
 
-            if self.elapsed > total:
-                self.advance_step()
+            if self.get_wait() == -1:
+                total = self.get_fade()
+
+            if self.cued == False and self.get_wait() != -1:
+                if self.elapsed >= total:
+                    self.advance_step()
 
     def advance_step(self):
+        if self.done:
+            return
         toSet = None
         step = self.sequence.steps[self.currentStep]
         # Apply the channel set to the saved sequence step, if supplied
@@ -39,9 +50,17 @@ class SequenceRunner:
             toSet = step.get_channel_state(self.controller, self.percent)
         else:
             toSet = step.get_custom_channel_state(self.controller, self.percent, self.channelSet)
-
+        print "Setting step %s" % self.currentStep
         self.patch.set_channel_state(toSet, self.get_fade())
         self.currentStep += 1
+        print "Total steps %s" % len(self.sequence.steps)
+        self.elapsed = 0
+        if self.currentStep >= len(self.sequence.steps):
+            if self.repeat:
+                self.currentStep = 0
+                print "Restarting"
+            else:
+                self.done = True
 
     def get_fade(self):
         if self.fade != -1:
@@ -57,8 +76,9 @@ class SequenceRunner:
 
 class Sequence:
 
-    def __init__(self, name):
+    def __init__(self, name, repeat):
         self.name = name
+        self.repeat = repeat
         self.steps = []
 
     def append_step(self, sequenceStep):

@@ -13,10 +13,9 @@ class DmxOutput(object):
     until the application exits.
     """
 
-    def __init__(self, patch, interval = 1):
+    def __init__(self, controller):
 
-        self.interval = interval
-        self.patch = patch
+        self.controller = controller
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True                            # Daemonize thread
@@ -31,12 +30,14 @@ class DmxOutput(object):
         def DmxSent(state):
             wrapper.Stop()
 
+        elapsed = 0.01
         while True:
-            self.patch.update_channels(self.interval)
+            start = time.time()
+            self.controller.update(elapsed)
 
             toSend = []
             i = 0
-            for val in self.patch.dmx:
+            for val in self.controller.patch.dmx:
                 i += 1
                 if i == 1:
                     if val != 255:
@@ -49,5 +50,6 @@ class DmxOutput(object):
             client.SendDmx(universe, data, DmxSent)
             wrapper.Run()
 
-            time.sleep(self.interval)
+            end = time.time()
+            elapsed = end - start
 
