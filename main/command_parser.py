@@ -85,6 +85,18 @@ class CommandParser:
             "params" : [ "string", "decimal" ]
         },
         {
+            # clear sequences
+            "pattern": "clearscenes",
+            "function": self.controller.clear_scenes_list,
+            "params" : [ ]
+        },
+        {
+            # delete scene [scene name]
+            "pattern": "delete(?:scene)(.+)",
+            "function": self.controller.delete_scene,
+            "params" : [ "string" ]
+        },
+        {
             # list scenes
             "pattern": "listscenes",
             "function": self.controller.list_scenes_list,
@@ -133,6 +145,24 @@ class CommandParser:
             "params" : [ "string", "string" ]
         },
         {
+            # clear sequences
+            "pattern": "clearsequences",
+            "function": self.controller.clear_sequences_list,
+            "params" : [ ]
+        },
+        {
+            # delete sequence [sequence name]
+            "pattern": "delete(?:sequence)(.+?)(?:step)(\d+)",
+            "function": self.controller.delete_sequence_step_list,
+            "params" : [ "string", "int" ]
+        },
+        {
+            # delete sequence [sequence name] step [step number]
+            "pattern": "delete(?:sequence)(.+?)",
+            "function": self.controller.delete_sequence,
+            "params" : [ "string" ]
+        },
+        {
             # unload sequence [sequence name]
             "pattern": "(?:unload|stop)(?:sequence)?(all)?(.+?)?(?:id)?(\d+)?$",
             "function": self.controller.unload_sequence_list,
@@ -173,6 +203,11 @@ class CommandParser:
 
         )
 
+    def runCommand(self, command):
+        split = re.split(";", command)
+        ret = ""
+        for line in split:
+           ret += "\n" + self.parseCommand(line)
 
     # ------------------ Parsing and Calling Commands ----------------------
     def parseCommand(self, command):

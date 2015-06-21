@@ -174,7 +174,19 @@ class Controller:
                 return scn
         return False
 
+    def clear_scenes_list(self, args):
+        self.scenes = []
+        return "All scenes deleted"
 
+    def delete_scene(self, name):
+        return self.delete_scene_list([name])
+    def delete_scene_list(self, args):
+        name = required_arg(args, 0, "A scene name must be supplied")
+        scene = self.find_scene(name)
+        if scene == False:
+            return "Scene not found"
+        self.scenes.remove(scene)
+        return "Scene %s deleted" % name
 
 
 
@@ -449,8 +461,6 @@ class Controller:
             runner.unpause()
             return "Sequence %s paused with id %s" % (name, id)
 
-
-
     def print_sequence(self, name):
         return self.print_sequence([name])
     def print_sequence_list(self, args):
@@ -477,6 +487,36 @@ class Controller:
         for sequence in self.sequences:
             str += "\n\t" + sequence.to_string_short()
         return str
+
+    def clear_sequences_list(self, args):
+        self.sequences = []
+        return "All sequences deleted"
+
+    def delete_sequence_step(self, name, step):
+        return self.delete_scene_list()
+    def delete_sequence_step_list(self, args):
+        name = required_arg(args, 0, "A sequence name must be supplied")
+        step = required_arg(args, 1, "A sequence step must be supplied")
+
+        sequence = self.get_sequence(name)
+        if sequence == False:
+            return "Sequence not found"
+
+        id = sequence.delete_step(step)
+        if id != -1:
+            return "Deleted step %s in sequence %s" % (id, sequence)
+        else:
+            return "Step %s not found in sequence %s" % (id, sequence)
+
+    def delete_sequence(self, name):
+        return self.delete_sequence_list([name])
+    def delete_sequence_list(self, args):
+        name = required_arg(args, 0, "A sequence name must be supplied")
+        sequence = self.get_sequence(name)
+        if sequence == False:
+            return "Sequence not found"
+        self.sequences.remove(sequence)
+        return "Sequence %s deleted" % name
 
 
 

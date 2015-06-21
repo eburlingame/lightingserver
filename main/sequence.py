@@ -133,9 +133,10 @@ class Sequence:
         for step in self.steps:
             if i == stepNumber:
                 self.steps.remove(step)
-                return
+                return i
             i += 1
         self.reindex_steps()
+        return -1
 
     def reindex_steps(self):
         i = 0

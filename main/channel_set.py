@@ -17,7 +17,7 @@ class ChannelState:
             self.parse(raw)
 
 
-    reg = "(?:channel)?(.+?)(?:@|at|\*)(\d+);?"
+    reg = "(?:channel)?(.+?)(?:@|at|\*)(\d+),?"
     def parse(self, raw):
         self.raw = raw
         noWhite = re.sub("\s", "", raw).lower()
@@ -87,7 +87,7 @@ class ChannelState:
             value = group[0]["value"]
             str += "%s at %s" % (channelSet.to_string(), value)
             if i != len(groups) - 1:
-                str += "; "
+                str += ", "
             i += 1
 
         return str
