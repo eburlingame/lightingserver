@@ -133,6 +133,24 @@ class CommandParser:
             "params" : [ "string", "string" ]
         },
         {
+            # unload sequence [sequence name]
+            "pattern": "(?:unload|stop)(?:sequence)?(all)?(.+?)?(?:id)?(\d+)?$",
+            "function": self.controller.unload_sequence_list,
+            "params" : [ "string", "string", "int" ]
+        },
+        {
+            # unload sequence [sequence name]
+            "pattern": "(?:pause|hold)(?:sequence)?(all)?(.+?)(?:id)?(\d+)?$",
+            "function": self.controller.pause_sequence_list,
+            "params" : [ "string", "string", "int" ]
+        },
+        {
+            # unload sequence [sequence name]
+            "pattern": "(?:unpause|play)(?:sequence)?(all)?(.+?)(?:id)?(\d+)?$",
+            "function": self.controller.unpause_sequence_list,
+            "params" : [ "string", "string", "int" ]
+        },
+        {
             # print sequence [sequence name]
             "pattern": "printsequence(.+)",
             "function": self.controller.print_sequence_list,
@@ -144,6 +162,13 @@ class CommandParser:
             "function": self.controller.list_sequences_list,
             "params" : [  ]
         },
+        {
+            # list running
+            "pattern": "listrunning",
+            "function": self.controller.list_running_list,
+            "params" : [  ]
+        },
+
 
 
         )

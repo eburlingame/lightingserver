@@ -50,6 +50,12 @@ class SequenceRunner:
             else:
                 self.done = True
 
+    def pause(self):
+        self.paused = True
+
+    def unpause(self):
+        self.paused = False
+
     def fade_step(self):
         step = self.sequence.steps[self.currentStep]
         # Apply the channel set to the saved sequence step, if supplied
@@ -58,7 +64,7 @@ class SequenceRunner:
         else:
             toSet = step.get_custom_channel_state(self.controller, self.percent, self.channelSet)
         # print "Setting step %s" % self.currentStep
-        print "Setting step %s fade %s " % (self.currentStep, self.get_fade())
+        # print "Setting step %s fade %s " % (self.currentStep, self.get_fade())
         self.patch.set_channel_state(toSet, self.get_fade())
         # Set the total elapsed so we will wait the correct amount for this step
         self.elapsedTotal = self.get_fade() + self.get_wait()
@@ -78,13 +84,28 @@ class SequenceRunner:
         ourWait = self.wait
         stepWait = self.sequence.get_step(self.currentStep).wait
         default = self.controller.defaultWait
-        if self.fade != -1:
+        if ourWait != -1:
             return ourWait
         elif stepWait != -1:
             return stepWait
         else:
             return default
 
+    def to_string(self):
+        str = "Sequence %s (Running id %s) " % (self.sequence.name, self.id)
+        if self.percent != 100:
+            str += "Percent: %s %\t\t" % self.percent
+        if self.cued != False:
+            str += "Manually Cued\t\t"
+        if self.fade != None:
+            str += "Fade: %s\t\t" % self.fade
+        if self.wait != None:
+            str += "Wait: %s\t\t" % self.wait
+        if self.repeat != True:
+            str += "Not repeating\t\t"
+        if self.channelSet != None:
+            str += "Channels: %s\t\t" % self.channelSet.to_string()
+        return strit
 
 
 class Sequence:

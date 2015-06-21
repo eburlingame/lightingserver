@@ -283,6 +283,18 @@ class Controller:
             if sequence.name == name:
                 return sequence
         return False
+    def get_sequence_runner(self, name, id = None):
+        if id == None:
+            runners = []
+            for runner in self.sequenceRunners:
+                if runner.sequence.name == name:
+                    runners.append(runner)
+            return runners
+        else:
+            for runner in self.sequenceRunners:
+                if runner.sequence.name == name and runner.id == id:
+                    return runner
+            return False
 
     def load_sequence(self, name, percent = 100, fade = -1, wait = -1, step = 0, cued = False, channelSet = None):
         return self.load_sequence_list((name, percent, fade, wait, step, cued, channelSet))
@@ -294,17 +306,20 @@ class Controller:
         step        = optional_arg(args, 4, 0)
         cued        = optional_arg(args, 5, False)
         channelSet  = optional_arg(args, 6, None)
-        print "FADE: %s" % fade
         sequence = self.get_sequence(name)
         if sequence == False:
             return "Sequence not found"
 
+        running_id = 0
+        for runner in self.sequenceRunners:
+            if runner.sequence.name == name:
+                running_id = runner.id + 1 # Set the new runner to be one more than the last
+
         # controller, id, sequence, channelSet = None, percent = 100,
         # cued = False, fade = -1, wait = -1, step = 0, repeat = True
-        runner = SequenceRunner(self, 0, sequence, channelSet, percent, cued, fade, wait, step)
+        runner = SequenceRunner(self, running_id, sequence, channelSet, percent, cued, fade, wait, step)
         self.sequenceRunners.append(runner)
-        return "Loaded sequence %s " % name
-
+        return "Loaded sequence %s (running id: %s) " % (name, running_id)
 
     def save_sequence(self, name, insert = False, step = -1, fade = -1, wait = -1,
                       repeat = False, all = False, cued = False, channelSet = None, channelState = None):
@@ -366,6 +381,76 @@ class Controller:
             sequence.append_step(newStep)
             return "Added new step #%s to sequence %s with %s channels" % (stepNum + 1, name, numChannels)
 
+    def unload_sequence(self, all = None, name = None, id = None):
+        return self.unload_sequence_list([all, name, id])
+    def unload_sequence_list(self, args):
+        all     = optional_arg(args, 0, False)
+        name    = optional_arg(args, 1, None)
+        id      = optional_arg(args, 2, None)
+        print "ALL: %s" % all
+        if all != False:
+            self.sequenceRunners = []
+            return "All sequences removed from running queue"
+        # Cancel all with a matching name
+        if id == None and name != None:
+            runners = self.get_sequence_runner(name, id)
+            for runner in runners:
+                self.sequenceRunners.remove(runner)
+            return "All sequences %s removed from running queue " % name
+        # Cancel one with a particular id
+        else:
+            runner = self.get_sequence_runner(name, id)
+            self.sequenceRunners.remove(runner)
+            return "Sequence %s removed from running queue with id %s" % (name, id)
+
+    def pause_sequence(self, all = None, name = None, id = None):
+        return self.pause_sequence_list([all, name, id])
+    def pause_sequence_list(self, args):
+        all     = optional_arg(args, 0, False)
+        name    = optional_arg(args, 1, None)
+        id      = optional_arg(args, 2, None)
+
+        if all != False:
+            for runner in self.sequenceRunners:
+                runner.pause()
+            return "All sequences removed from running queue"
+        # Pause all with a matching name
+        if id == None and name != None:
+            runners = self.get_sequence_runner(name, id)
+            for runner in runners:
+                runner.pause()
+            return "All sequences %s paused " % name
+        # Pause one with a particular id
+        else:
+            runner = self.get_sequence_runner(name, id)
+            runner.pause()
+            return "Sequence %s paused with id %s" % (name, id)
+
+    def unpause_sequence(self, all = None, name = None, id = None):
+        return self.pause_sequence_list([all, name, id])
+    def unpause_sequence_list(self, args):
+        all     = optional_arg(args, 0, False)
+        name    = optional_arg(args, 1, None)
+        id      = optional_arg(args, 2, None)
+
+        if all != False:
+            for runner in self.sequenceRunners:
+                runner.unpause()
+            return "All sequences removed from running queue"
+        # Pause all with a matching name
+        if id == None and name != None:
+            runners = self.get_sequence_runner(name, id)
+            for runner in runners:
+                runner.unpause()
+            return "All sequences %s paused " % name
+        # Pause one with a particular id
+        else:
+            runner = self.get_sequence_runner(name, id)
+            runner.unpause()
+            return "Sequence %s paused with id %s" % (name, id)
+
+
+
     def print_sequence(self, name):
         return self.print_sequence([name])
     def print_sequence_list(self, args):
@@ -376,6 +461,14 @@ class Controller:
             return "Sequence not found"
 
         return seq.to_string()
+
+    def list_running(self):
+        return self.list_running_list()
+    def list_running_list(self, args):
+        str = "Running Sequences: "
+        for runner in self.sequenceRunners:
+            str += "\n\t" + runner.to_string()
+        return str
 
     def list_sequences(self):
         return self.list_sequences_list(None)
@@ -393,6 +486,9 @@ class Controller:
     def update(self, diff):
         for runner in self.sequenceRunners:
             runner.update(diff)
+            # Remove the runner if it has completed the sequence
+            if runner.done:
+                self.sequenceRunners.remove(runner)
         self.patch.update_channels(diff)
 
 
