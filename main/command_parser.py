@@ -251,7 +251,7 @@ class CommandParser:
         ret = ""
         for line in split:
            ret += "\n" + self.parseCommand(line)
-
+        return ret
 
     # ------------------ Parsing and Calling Commands ----------------------
     def parseCommand(self, command):
@@ -266,13 +266,8 @@ class CommandParser:
             if match and len(match.groups()) == len(params): # If the pattern matches our template
                 # print "Matched: " + p['pattern']
                 return self.match_and_call(params, match, func)
-                try:
-                    pass
-                except Exception, e:
-                    return "Error: " + e.message
 
-
-        return "Didn't regonize input"
+        raise Exception("Didn't regonize input")
 
     def match_and_call(self, params, match, func):
         args = []

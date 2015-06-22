@@ -98,8 +98,7 @@ class Patch:
         return False
 
     def to_string(self):
-        str = "Patched Channels:\n\n"
-
+        str = ""
         i = 1
         for channel in self.channels:
             str += "\tChn\t%s\t: DMX\t%s\t" % (channel.number, channel.dmxAddr)
@@ -108,6 +107,15 @@ class Patch:
             i += 1
         return str
 
+    def to_commands(self):
+        str = ""
+        for channel in self.channels:
+            str += "\npatch channel %s dmx %s " % (channel.number, channel.dmxAddr)
+            if channel.fixture != "":
+                str += "fixture %s " % (channel.fixture)
+            if channel.label != "":
+                str += "label %s " % (channel.label)
+        return str
 
     # Updates all the channel fades and dmx output array
     # Takes diff in seconds

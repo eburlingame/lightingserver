@@ -597,7 +597,6 @@ class Controller:
 
 
 
-
     # ------------------ Util Functions ----------------------
     def update(self, diff):
         for runner in self.sequenceRunners:
@@ -606,6 +605,22 @@ class Controller:
             if runner.done:
                 self.sequenceRunners.remove(runner)
         self.patch.update_channels(diff)
+
+    def to_commands(self):
+        str = "#PATCH:"
+        self.patch.to_commands()
+
+        str += "#GROUPS:"
+        for group in self.groups:
+            str += group.to_command()
+
+        str += "#SCENES:"
+        for scene in self.scenes:
+            str += scene.to_command()
+
+        str += "#SEQUENCES:"
+        for sequence in self.sequences:
+            str += sequence.to_command()
 
 
     def __init__(self):
@@ -618,3 +633,21 @@ class Controller:
 
         self.defaultFade = 3
         self.defaultWait = 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

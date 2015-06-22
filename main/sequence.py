@@ -105,8 +105,7 @@ class SequenceRunner:
             str += "Not repeating\t\t"
         if self.channelSet != None:
             str += "Channels: %s\t\t" % self.channelSet.to_string()
-        return strit
-
+        return str
 
 class Sequence:
 
@@ -157,6 +156,12 @@ class Sequence:
             str += "\n\t\t\t" + step.to_string()
         return str
 
+    def to_command(self):
+        str = ""
+        for step in self.steps:
+            str += step.to_command(self)
+        return str
+
 
 class SequenceStep:
     def __init__(self, number, label, channelState, fade = -1, wait = -1):
@@ -197,3 +202,15 @@ class SequenceStep:
 
     def to_string(self):
         return "Step %s (Fade: %s, Wait: %s): %s" % (self.number, self.fade, self.wait, self.channelState.to_string())
+
+    def to_command(self, sequence):
+        str = "save sequence %s "
+        if self.fade:
+            str += "fade %s " % self.fade
+        if self.wait:
+            str += "wait %s " % self.wait
+        if self.fade:
+            str += "fade %s " % self.fade
+        if self.fade:
+            str += "fade %s " % self.fade
+
