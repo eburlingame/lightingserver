@@ -12,18 +12,7 @@ def main():
 
     pre_commands = []
 
-    pre_commands.append( "patch channel 1 dmx 1 fixture led" )
-    pre_commands.append( "patch channel 2 dmx 2 fixture led" )
-    pre_commands.append( "patch channel 3 dmx 3 fixture led" )
-
-    pre_commands.append( "1*100" )
-
-
-    pre_commands.append("save sequence test wait 1 fade 1 { 1 * 100}")
-    pre_commands.append("save sequence test wait 1 fade 1 { 1 * 0  }")
-
-    pre_commands.append("print sequence test")
-    pre_commands.append("load sequence test channel 2")
+    pre_commands.append("patch one-to-one channel 1/100 dmx 1/100")
 
 
 

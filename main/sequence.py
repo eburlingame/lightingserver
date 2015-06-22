@@ -24,7 +24,7 @@ class SequenceRunner:
         self.elapsed = 0
         self.elapsedTotal = self.get_fade() + self.get_wait()
 
-        self.advance_step()
+        self.advance()
 
 
     # Takes the difference in time since last update in seconds
@@ -34,9 +34,9 @@ class SequenceRunner:
 
             if self.cued == False:
                 if self.elapsed >= self.elapsedTotal:
-                    self.advance_step()
+                    self.advance()
 
-    def advance_step(self):
+    def advance(self):
         if self.done:
             return
         toSet = None

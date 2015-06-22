@@ -21,6 +21,25 @@ class CommandParser:
             "function": self.controller.patch_channel_list,
             "params" : ["int", "int", "string", "string"]
         },
+        {
+            # patch (one-to-one, one2one) channel [channel selection] dmx [channel address selection]
+            "pattern": "patch(?:one-to-one|one2one)channel(.+?)dmx(.+?)$",
+            "function": self.controller.patch_one_to_one_list,
+            "params" : [ "channel_range", "channel_range" ]
+        },
+        {
+            # unpatch dmx [channel selection]
+            "pattern": "unpatchdmx(.+)",
+            "function": self.controller.unpatch_dmx_list,
+            "params" : [ "channel_range" ]
+        },
+        {
+            # unpatch channel [channel selection]
+            "pattern": "unpatchchannels?(.+)",
+            "function": self.controller.unpatch_channel_list,
+            "params" : [ "channel_range" ]
+        },
+
 
 
         # Channel Control
@@ -50,6 +69,12 @@ class CommandParser:
             "pattern" : "(?:save)(?:group)(.+)",
             "function": self.controller.save_group_list,
             "params"  : ["string"]
+        },
+        {
+            # list groups
+            "pattern" : "(?:list)(?:group)s?",
+            "function": self.controller.list_groups_list,
+            "params"  : [  ]
         },
 
 
@@ -173,6 +198,12 @@ class CommandParser:
             "pattern": "(?:pause|hold)(?:sequence)?(all)?(.+?)(?:id)?(\d+)?$",
             "function": self.controller.pause_sequence_list,
             "params" : [ "string", "string", "int" ]
+        },
+        {
+            # (advance, go) sequence ~all [sequence name] ~fade ~[fade time] ~id [running id number]
+            "pattern": "(?:advance|go)(?:sequence)?(all)?(.+?)(?:fade)?([\d|\.]+)?(?:id)?(\d+)?$",
+            "function": self.controller.advance_sequence_list,
+            "params" : [ "string", "string", "decimal", "int"]
         },
         {
             # unload sequence [sequence name]

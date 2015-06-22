@@ -53,8 +53,41 @@ class Controller:
         self.patch.patch_channel(number, dmx, label, fixture)
         return "Patched channel %s to dmx address %s" % (number, dmx)
 
+    def patch_one_to_one(self, channelSet, dmxChannelSet):
+        return self.patch_one_to_one_list((channelSet, dmxChannelSet))
+    def patch_one_to_one_list(self, args):
+        channelSet      = required_arg(args, 0, "A channelSet must be supplied")
+        dmxChannelSet   = required_arg(args, 1, "A dmx channelSet must be supplied")
 
+        if len(channelSet.set) != len(dmxChannelSet.set):
+            return "The same number of channel must be supplied for one to one patching"
 
+        channels = sorted(list(channelSet.set))
+        dmxs     = sorted(list(dmxChannelSet.set))
+        for i in range(0, len(channels)):
+            self.patch.patch_channel(channels[i], dmxs[i])
+
+        return "Patched channels (%s) to DMX channels (%s)" % (channelSet.to_string(), dmxChannelSet.to_string())
+
+    def unpatch_dmx(self, channelSet):
+        return self.unpatch_dmx_list([channelSet])
+    def unpatch_dmx_list(self, args):
+        channelSet = required_arg(args, 0, "A ChannelSet must be supplied")
+
+        for channel in channelSet.set:
+            self.patch.unpatch_dmx(channel)
+
+        return "Unpatch DMX channels %s" % channelSet.to_string()
+
+    def unpatch_channel(self, channelSet):
+        return self.unpatch_channel_list([channelSet])
+    def unpatch_channel_list(self, args):
+        channelSet = required_arg(args, 0, "A ChannelSet must be supplied")
+
+        for channel in channelSet.set:
+            self.patch.unpatch_channel(channel)
+
+        return "Unpatch control channels %s" % channelSet.to_string()
 
 
     # ------------------ Scenes ----------------------
@@ -187,6 +220,7 @@ class Controller:
             return "Scene not found"
         self.scenes.remove(scene)
         return "Scene %s deleted" % name
+
 
 
 
@@ -461,6 +495,30 @@ class Controller:
             runner.unpause()
             return "Sequence %s paused with id %s" % (name, id)
 
+
+    def advance_sequence(self, all = None, name = None, id = None):
+        return self.pause_sequence_list([all, name, id])
+    def advance_sequence_list(self, args):
+        all     = optional_arg(args, 0, False)
+        name    = optional_arg(args, 1, None)
+        id      = optional_arg(args, 2, None)
+
+        if all != False:
+            for runner in self.sequenceRunners:
+                runner.advance()
+            return "All sequences advanced"
+        # Pause all with a matching name
+        if id == None and name != None:
+            runners = self.get_sequence_runner(name, id)
+            for runner in runners:
+                runner.advance()
+            return "All sequences %s advanced " % name
+        # Pause one with a particular id
+        else:
+            runner = self.get_sequence_runner(name, id)
+            runner.advance()
+            return "Sequence %s advanced with id %s" % (name, id)
+
     def print_sequence(self, name):
         return self.print_sequence([name])
     def print_sequence_list(self, args):
@@ -483,7 +541,7 @@ class Controller:
     def list_sequences(self):
         return self.list_sequences_list(None)
     def list_sequences_list(self, args):
-        str = "Saved Sequences: "
+        str = "Current Saved Sequences: "
         for sequence in self.sequences:
             str += "\n\t" + sequence.to_string_short()
         return str
