@@ -56,7 +56,6 @@ class CommandParser:
             "params" : [ "int" ]
         },
 
-
         # Groups
         {
             # save (group, grp) [name] {channel selection}
@@ -231,6 +230,13 @@ class CommandParser:
         },
 
 
+        {
+            # (@, at, *) [percent]
+            "pattern": "print(?:channels)?",
+            "function": self.controller.print_channels_list,
+            "params" : [  ]
+        },
+
 
         )
 
@@ -239,6 +245,7 @@ class CommandParser:
         ret = ""
         for line in split:
            ret += "\n" + self.parseCommand(line)
+
 
     # ------------------ Parsing and Calling Commands ----------------------
     def parseCommand(self, command):
@@ -286,7 +293,6 @@ class CommandParser:
 
         # print "Args %s " % args
         return func(args) # Call the function
-
 
 
 
@@ -446,47 +452,6 @@ class CommandParser:
             return True
         else:
             return default
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

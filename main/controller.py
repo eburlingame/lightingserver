@@ -90,6 +90,20 @@ class Controller:
         return "Unpatch control channels %s" % channelSet.to_string()
 
 
+    def print_channels(self):
+        return self.print_channels_list([])
+    def print_channels_list(self, args):
+        str = "Active Channels:\n\n"
+
+        i = 1
+        for channel in self.patch.channels:
+            str += "\t\tChn\t%s\t: %s\t" % (channel.number, "{:10.2f}".format(channel.value))
+            if i % 4 == 0:
+                str += "\n"
+            i += 1
+        return str
+
+
     # ------------------ Scenes ----------------------
 
     def load_scene(self, name, fade = -1, percent = 100):
