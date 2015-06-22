@@ -89,6 +89,10 @@ class Controller:
 
         return "Unpatch control channels %s" % channelSet.to_string()
 
+    def print_patch(self):
+        return self.print_patch_list([ ])
+    def print_patch_list(self, args):
+        return "Patched Channels: \n" + self.patch.to_string()
 
     def print_channels(self):
         return self.print_channels_list([])
@@ -97,7 +101,7 @@ class Controller:
 
         i = 1
         for channel in self.patch.channels:
-            str += "\t\tChn\t%s\t: %s\t" % (channel.number, "{:10.2f}".format(channel.value))
+            str += "\tChn\t%s\t: %s\t" % (channel.number, "{:10.2f}".format(channel.value))
             if i % 4 == 0:
                 str += "\n"
             i += 1

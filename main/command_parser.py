@@ -34,6 +34,12 @@ class CommandParser:
             "params" : [ "channel_range" ]
         },
         {
+            # unpatch dmx [channel selection]
+            "pattern": "printpatch",
+            "function": self.controller.print_patch_list,
+            "params" : [  ]
+        },
+        {
             # unpatch channel [channel selection]
             "pattern": "unpatchchannels?(.+)",
             "function": self.controller.unpatch_channel_list,

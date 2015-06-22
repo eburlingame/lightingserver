@@ -97,6 +97,16 @@ class Patch:
                 return True
         return False
 
+    def to_string(self):
+        str = "Patched Channels:\n\n"
+
+        i = 1
+        for channel in self.channels:
+            str += "\tChn\t%s\t: DMX\t%s\t" % (channel.number, channel.dmxAddr)
+            if i % 4 == 0:
+                str += "\n"
+            i += 1
+        return str
 
 
     # Updates all the channel fades and dmx output array
