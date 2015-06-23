@@ -205,12 +205,11 @@ class SequenceStep:
 
     def to_command(self, sequence):
         str = "save sequence %s "
-        if self.fade:
+        if self.fade != -1:
             str += "fade %s " % self.fade
-        if self.wait:
+        if self.wait != -1:
             str += "wait %s " % self.wait
-        if self.fade:
-            str += "fade %s " % self.fade
-        if self.fade:
-            str += "fade %s " % self.fade
+
+        str += "{ %s } " % self.channelState.to_string()
+        return str
 

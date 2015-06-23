@@ -22,23 +22,23 @@ def lighting_main():
     print "LightingServer starting..."
 
     wd = os.path.dirname(os.path.realpath(__file__))
-
-    read_file(wd + "/start.txt")
+    startPath = wd + "/../start.txt"
+    read_file(startPath)
 
     cmd = raw_input(">>> ")
     runCommand(cmd)
     while cmd != "quit":
         cmd = raw_input(">>> ")
+        if cmd == "read":
+            read_file(startPath)
         runCommand(cmd)
 
 
 def runCommand(strCommand):
     try:
-        print colors.OKGREEN
-        print command.runCommand(strCommand)
+        print colors.OKGREEN + command.runCommand(strCommand)
     except Exception, e:
-        print colors.WARNING
-        print e.message
+        print colors.WARNING + e.message
     finally:
         print colors.ENDC
 
@@ -46,12 +46,11 @@ def read_file(filepath):
     file = open(filepath, 'r')
     print "Loading file %s:" % file.name
     for line in file:
-        if len(line) > 0 and line[0] != "#":
+        if len(line) > 0 and line[0] != "#" and line != "":
             print line
             runCommand(line)
         else:
-            print colors.HEADER
-            print line[1:] # print line without the comment
+            print colors.HEADER + line[1:] # print line without the comment
             print colors.ENDC
 
 def write_file(filepath):

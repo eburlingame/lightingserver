@@ -243,35 +243,54 @@ class Controller:
 
 
     # ------------------ Groups ----------------------
+    def get_group(self, name):
+        for group in self.groups:
+            if group.name == name:
+                return group
+        return False
+
     def save_group(self, name, channelSet):
         return self.save_group_list((name, channelSet))
     def save_group_list(self, args):
         name        = required_arg(args, 0, "A name must be supplied")
         channelSet  = optional_arg(args, 1, self.lastSelected)
 
+        if channelSet.set == False:
+            return "No channels selected previously"
+
         newGroup = Group(name, channelSet)
+
         overwrite = False
-        for grp in self.groups:
-            if grp.name == newGroup.name:
-                self.groups.remove(grp)
-                overwrite = True
+        group = self.get_group(name)
+        if group != False:
+            self.groups.remove(group)
+            overwrite = True
 
         self.groups.append(newGroup)
 
         if overwrite:
-            return "Group %s saved with channels %s" % (name, channelSet.to_string())
-        else:
             return "Group %s overwritten with channels %s" % (name, channelSet.to_string())
+        else:
+            return "Group %s saved with channels %s" % (name, channelSet.to_string())
 
     def list_groups(self):
         return self.list_groups_list
     def list_groups_list(self, args):
         str = "Current Saved Groups:\n"
         for group in self.groups:
-            str += "\tName: %s\t\t\t\tChannels: %s" % (group.name, group.channelSet.to_string())
-            str += "\n"
+            str += "\t" + group.to_string() + "\n"
         return str
 
+    def print_group(self, name):
+        return self.print_group_list([name])
+    def print_group_list(self, args):
+        name = required_arg(args, 0, "A group name is required")
+
+        group = self.get_group(name)
+        if group == False:
+            return "Group not found"
+
+        return "\t" + group.to_string()
 
 
 

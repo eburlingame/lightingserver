@@ -42,3 +42,4 @@ class Scene:
         if self.fade != -1:
             str += " fade %s " % self.fade
         str += "channel { %s }" % self.channelState.to_string()
+        return str

@@ -16,7 +16,6 @@ class ChannelState:
         if raw != "":
             self.parse(raw)
 
-
     reg = "(?:channel)?(.+?)(?:@|at|\*)(\d+),?"
     def parse(self, raw):
         self.raw = raw
@@ -74,7 +73,6 @@ class ChannelState:
 
         return groups
 
-
     def to_string(self):
         str = ""
         groups = self.group_by_values()
@@ -114,9 +112,8 @@ class ChannelSet:
 
         return adjacents
 
-
     def to_string(self):
-        if len(self.set) == 0:
+        if self.set == None or len(self.set) == 0:
             return 'Empty'
 
         string = ""

@@ -65,7 +65,7 @@ class CommandParser:
         # Groups
         {
             # save (group, grp) [name] {channel selection}
-            "pattern": "(?:save)(?:group)(.+){(.+)}",
+            "pattern": "(?:save)(?:group)(.+?)(?:channels?)(.+)",
             "function": self.controller.save_group_list,
             "params" : ["string", "channel_range"]
         },
@@ -81,7 +81,12 @@ class CommandParser:
             "function": self.controller.list_groups_list,
             "params"  : [  ]
         },
-
+        {
+            # print group [group name]
+            "pattern" : "printgroup(.+)",
+            "function": self.controller.print_group_list,
+            "params"  : [ "string" ]
+        },
 
         # Scenes
         {
@@ -267,7 +272,8 @@ class CommandParser:
                 # print "Matched: " + p['pattern']
                 return self.match_and_call(params, match, func)
 
-        raise Exception("Didn't regonize input")
+        return "Didn't regonize input"
+        # raise Exception("Didn't regonize input")
 
     def match_and_call(self, params, match, func):
         args = []

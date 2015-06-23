@@ -45,23 +45,37 @@ class ChannelRangeParser:
 
     def match_groups(self, noWhite):
         # ((and|\+)|(except|-)|^)group(.+?)(?=(?:and|\+)|(?:except|-))
-        reg = "((and|\+)|(except|-)|^)group(.+?)(?=(?=and|\+)|(?=except|-)|$)"
+        reg = "((and|\+)|(except|-)|^)group(.+?)((?:channel)(\d+))?(?=(?=and|\+)|(?=except|-)|$)"
         matches = re.findall(reg, noWhite)
         if matches:
             for match in matches:
                 add = True
+                channel = -1
                 name = match[3]
                 if match[2] != "":  # We find and "except" modifier
                     add = False
+                if match[4] != "": # Found a channel specificed
+                    channel = int(match[5])
 
                 group = self.get_group(name)
                 if group == False:
                     raise Exception("Group not found")
+                group = group.channelSet.set
+
+                toAct = set()
+                if channel != -1:
+                    try:
+                        toAct = [ group[channel - 1] ]
+                    except:
+                        raise Exception("Channel not found in group")
+                else:
+                    toAct = group
+
 
                 if add:
-                    self.add(list(group.channelSet.set))
+                    self.add(toAct)
                 else:
-                    self.remove(list(group.channelSet.set))
+                    self.remove(toAct)
 
     def match_fixtures(self, noWhite):
         # ((and|\+)|(except|-)|^)group(.+?)(?=(?:and|\+)|(?:except|-))
