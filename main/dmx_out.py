@@ -7,11 +7,6 @@ from ola.ClientWrapper import ClientWrapper
 
 OFFSET = 0.00001
 class DmxOutput(object):
-    """ Threading example class
-
-    The run() method will be started and it will run in the background
-    until the application exits.
-    """
 
     def __init__(self, controller):
 
@@ -39,9 +34,6 @@ class DmxOutput(object):
             i = 0
             for val in self.controller.patch.dmx:
                 i += 1
-                if i == 1:
-                    if val != 255:
-                        "not 255!"
 
                 toSend.append(int(val))
 
@@ -52,4 +44,3 @@ class DmxOutput(object):
 
             end = time.time()
             elapsed = end - start
-

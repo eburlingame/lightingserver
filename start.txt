@@ -31,3 +31,6 @@ save sequence rgb fade 10 wait 0 { 1 + 4 * 100, 3 + 2 * 0 }
 
 #WRITING
 write
+
+#SERVER
+start server

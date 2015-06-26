@@ -4,14 +4,11 @@ import re
 from dmx_out import DmxOutput
 from command_parser import CommandParser
 from controller import Controller
+from server import WSServer
 
 controller = Controller()
 command = CommandParser(controller)
 dmxOut = DmxOutput(controller)
-
-wd = os.path.dirname(os.path.realpath(__file__))
-startPath = wd + "/../start.txt"
-dataPath = wd + "/../data.txt"
 
 
 class colors:
@@ -24,62 +21,92 @@ class colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+class Main:
 
-def lighting_main():
-    print "LightingServer starting..."
+    def __init__(self):
+        print "LightingServer starting..."
 
-    read_file(startPath)
+        self.wd = os.path.dirname(os.path.realpath(__file__))
+        self.startPath = self.wd + "/../start.txt"
+        self.dataPath = self.wd + "/../data.txt"
 
-    while True:
-        cmd = raw_input(">>> ")
-        runCommand(cmd)
+        self.read_file(self.startPath)
 
+        while True:
+            cmd = raw_input(">>> ")
+            self.run_command(cmd)
 
-def runCommand(cmd):
+    def run_command(self, cmd):
+        response = self.parse_command(cmd)
+        print response
 
-    if re.match("quit", cmd):
-      exit()
-    elif re.match("read(.+)", cmd):
-        match = re.match("read(.+)", cmd)
-        read_file(match.group(1))
-    elif re.match("read", cmd):
-        read_file(dataPath)
-    elif re.match("write(.+)", cmd):
-        match = re.match("read(.+)", cmd)
-        write_file(match.group(1))
-    elif re.match("write", cmd):
-        write_file(dataPath)
-    else:
+    def run_server_command(self, cmd):
+        response = self.parse_command(cmd, False)
+        print response
+        return response
+
+    def parse_command(self, cmd, print_colors = True):
+        noWhite = re.sub("\s", "", cmd)
+        if re.match("quit", noWhite):
+          exit()
+
+        elif re.match("read(.+)", noWhite):
+            match = re.match("read(.+)", noWhite)
+            return self.read_file(match.group(1))
+        elif re.match("read", noWhite):
+            return self.read_file(self.dataPath)
+
+        elif re.match("write(.+)", noWhite):
+            match = re.match("read(.+)", noWhite)
+            return self.write_file(match.group(1))
+        elif re.match("write", noWhite):
+            return self.write_file(self.dataPath)
+
+        elif re.match("startserver", noWhite):
+            return self.start_server()
+
+        else:
+            try:
+                if print_colors:
+                    return colors.OKGREEN + command.runCommand(cmd) + colors.ENDC
+                else:
+                    return command.runCommand(cmd)
+            except Exception, e:
+                if print_colors:
+                    return colors.WARNING + e.message + colors.ENDC
+                else:
+                    return e.message
+
+    def read_file(self, filepath):
         try:
-            print colors.OKGREEN + command.runCommand(cmd)
-        except Exception, e:
-            print colors.WARNING + e.message
-        finally:
-            print colors.ENDC
+            file = open(filepath, 'r')
+        except:
+            return "File could not be opened"
 
-def read_file(filepath):
-    try:
-        file = open(filepath, 'r')
-    except:
-        print "File could not be opened"
+        for line in file:
+            noWhite = re.sub("\s", "", line)
+            noWhite = re.sub("\n", "", noWhite)
+            if noWhite != "":
+                if len(noWhite) > 0 and noWhite[0] != "#":
+                    print line
+                    self.run_command(line)
+                else:
+                    print colors.HEADER + line[1:] + colors.ENDC # print line without the comment
+        file.close()
+        return "Loaded file %s:" % file.name
 
-    print "Loading file %s:" % file.name
-    for line in file:
-        noWhite = re.sub("\s", "", line)
-        noWhite = re.sub("\n", "", noWhite)
-        if noWhite != "":
-            if len(noWhite) > 0 and noWhite[0] != "#":
-                print line
-                runCommand(line)
-            else:
-                print colors.HEADER + line[1:] + colors.ENDC # print line without the comment
-    file.close()
-
-def write_file(filepath):
-    toWrite = controller.to_commands()
-    file = open(filepath, 'w')
-    file.write(toWrite)
-    file.close()
+    def write_file(self, filepath):
+        toWrite = controller.to_commands()
+        file = open(filepath, 'w')
+        file.write(toWrite)
+        file.close()
+        return "Wrote file %s " % filepath
 
 
-lighting_main()
+    def start_server(self):
+        port = 8080
+        server = WSServer(self, port)
+        return "Server started on port %s" % server.port
+
+
+main = Main()

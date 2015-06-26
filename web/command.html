@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Command Tester</title>
+</head>
+<body>
+
+<input type="text" id="command_box" onkeydown="keydown(event)" />
+
+</body>
+<script>
+    var socket = new WebSocket("ws://localhost:9000/ws");
+    socket.onmessage = function (event)
+    {
+        console.log(event.data);
+    }
+    function keydown(e)
+    {
+        if(e.keyCode == 13)
+        {
+            console.log("ENTER");
+            el = document.getElementById("command_box")
+            command = el.value;
+            socket.send(command);
+            return false; // returning false will prevent the event from bubbling up.
+        }
+        return true;
+    }
+
+</script>
+</html>
