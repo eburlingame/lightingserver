@@ -159,7 +159,7 @@ class Sequence:
     def to_command(self):
         str = ""
         for step in self.steps:
-            str += step.to_command(self)
+            str += step.to_command() + "\n"
         return str
 
 
@@ -203,7 +203,7 @@ class SequenceStep:
     def to_string(self):
         return "Step %s (Fade: %s, Wait: %s): %s" % (self.number, self.fade, self.wait, self.channelState.to_string())
 
-    def to_command(self, sequence):
+    def to_command(self):
         str = "save sequence %s "
         if self.fade != -1:
             str += "fade %s " % self.fade

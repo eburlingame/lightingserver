@@ -13,6 +13,7 @@ def main():
     pre_commands = []
 
     pre_commands.append("patch one-to-one channel 1/100 dmx 1/100")
+    pre_commands.append("print patch")
 
 
 

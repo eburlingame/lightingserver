@@ -91,8 +91,6 @@ class ChannelRangeParser:
                 if match[4] != "": # Found a channel specificed
                     channel = int(match[5])
 
-                print name
-
                 group = self.get_channels_in_fixture(name)
 
                 if len(group) == 0:

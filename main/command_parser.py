@@ -14,6 +14,18 @@ class CommandParser:
     def __init__(self, controller):
         self.controller = controller
         self.patterns = (
+
+        # Console Util Commands
+        {
+            # patch channel [channel number] dmx [dmx address] ~fixture ~[fixture] ~label ~[label]
+            "pattern": "(?:patch)(?:channel)(\d+)(?:dmx)(\d+)(?:fixture)?(\d+)?(?:label)?(\w+)?",
+            "function": self.controller.patch_channel_list,
+            "params" : ["int", "int", "string", "string"]
+        },
+
+
+
+
         # Patching
         {
             # patch channel [channel number] dmx [dmx address] ~fixture ~[fixture] ~label ~[label]

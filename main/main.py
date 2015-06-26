@@ -1,5 +1,6 @@
 __author__ = 'Eric Burlingame'
 import os
+import re
 from dmx_out import DmxOutput
 from command_parser import CommandParser
 from controller import Controller
@@ -7,6 +8,11 @@ from controller import Controller
 controller = Controller()
 command = CommandParser(controller)
 dmxOut = DmxOutput(controller)
+
+wd = os.path.dirname(os.path.realpath(__file__))
+startPath = wd + "/../start.txt"
+dataPath = wd + "/../data.txt"
+
 
 class colors:
     HEADER = '\033[95m'
@@ -18,43 +24,62 @@ class colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+
 def lighting_main():
     print "LightingServer starting..."
 
-    wd = os.path.dirname(os.path.realpath(__file__))
-    startPath = wd + "/../start.txt"
     read_file(startPath)
 
-    cmd = raw_input(">>> ")
-    runCommand(cmd)
-    while cmd != "quit":
+    while True:
         cmd = raw_input(">>> ")
-        if cmd == "read":
-            read_file(startPath)
         runCommand(cmd)
 
 
-def runCommand(strCommand):
-    try:
-        print colors.OKGREEN + command.runCommand(strCommand)
-    except Exception, e:
-        print colors.WARNING + e.message
-    finally:
-        print colors.ENDC
+def runCommand(cmd):
+
+    if re.match("quit", cmd):
+      exit()
+    elif re.match("read(.+)", cmd):
+        match = re.match("read(.+)", cmd)
+        read_file(match.group(1))
+    elif re.match("read", cmd):
+        read_file(dataPath)
+    elif re.match("write(.+)", cmd):
+        match = re.match("read(.+)", cmd)
+        write_file(match.group(1))
+    elif re.match("write", cmd):
+        write_file(dataPath)
+    else:
+        try:
+            print colors.OKGREEN + command.runCommand(cmd)
+        except Exception, e:
+            print colors.WARNING + e.message
+        finally:
+            print colors.ENDC
 
 def read_file(filepath):
-    file = open(filepath, 'r')
+    try:
+        file = open(filepath, 'r')
+    except:
+        print "File could not be opened"
+
     print "Loading file %s:" % file.name
     for line in file:
-        if len(line) > 0 and line[0] != "#" and line != "":
-            print line
-            runCommand(line)
-        else:
-            print colors.HEADER + line[1:] # print line without the comment
-            print colors.ENDC
+        noWhite = re.sub("\s", "", line)
+        noWhite = re.sub("\n", "", noWhite)
+        if noWhite != "":
+            if len(noWhite) > 0 and noWhite[0] != "#":
+                print line
+                runCommand(line)
+            else:
+                print colors.HEADER + line[1:] + colors.ENDC # print line without the comment
+    file.close()
 
 def write_file(filepath):
     toWrite = controller.to_commands()
+    file = open(filepath, 'w')
+    file.write(toWrite)
+    file.close()
 
 
 lighting_main()

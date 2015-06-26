@@ -627,20 +627,25 @@ class Controller:
 
     def to_commands(self):
         str = "#PATCH:"
-        self.patch.to_commands()
+        str += self.patch.to_commands()
 
-        str += "#GROUPS:"
+        str += "\n\n"
+
+        str += "#GROUPS:\n"
         for group in self.groups:
             str += group.to_command()
+        str += "\n"
 
-        str += "#SCENES:"
+        str += "#SCENES:\n"
         for scene in self.scenes:
             str += scene.to_command()
+        str += "\n"
 
-        str += "#SEQUENCES:"
+        str += "#SEQUENCES:\n"
         for sequence in self.sequences:
             str += sequence.to_command()
 
+        return str
 
     def __init__(self):
         self.patch = Patch()
