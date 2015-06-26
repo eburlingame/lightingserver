@@ -1,9 +1,12 @@
+import time
+from dateutil import parser
+
 __author__ = 'Eric Burlingame'
 import re
 from range_parser import *
 from channel_set import *
 from channel_range_parser import *
-from controller import Controller
+from command_shortcut import *
 
 class CommandParser:
     """The controller class holds the primary logic for controlling the channels.
@@ -13,6 +16,7 @@ class CommandParser:
     # ------------------ Commmand Patterns ----------------------
     def __init__(self, controller):
         self.controller = controller
+        self.shortcuts = []
         self.patterns = (
 
         # Console Util Commands
@@ -22,8 +26,34 @@ class CommandParser:
             "function": self.controller.patch_channel_list,
             "params" : ["int", "int", "string", "string"]
         },
+        {
+            # define "[template]" as "[command]"
+            "pattern": "(?:define)\"(.+?)\"as\"(.+?)\"",
+            "function": self.define_shortcut,
+            "params" : [ "string", "string" ]
+        },
 
 
+        # Scheudling
+
+        {
+            # schedule "[command]" at [time]
+            "pattern": "schedule\"(.+?)\"at(.+)",
+            "function": self.controller.schedule_command_list,
+            "params" : [ "string", "time" ]
+        },
+        {
+            # delete schedule [time]
+            "pattern": "deleteschedule(.+)",
+            "function": self.controller.delete_schedule_list,
+            "params" : [ "time" ]
+        },
+        {
+            # list schedules
+            "pattern": "listschedules?",
+            "function": self.controller.list_schedules_list,
+            "params" : [  ]
+        },
 
 
         # Patching
@@ -254,7 +284,7 @@ class CommandParser:
 
 
         {
-            # (@, at, *) [percent]
+            # print channels
             "pattern": "print(?:channels)?",
             "function": self.controller.print_channels_list,
             "params" : [  ]
@@ -275,6 +305,9 @@ class CommandParser:
 
         noWhite = re.sub("\s", "", command) # remove whitespace
         noWhite = noWhite.lower() # make lower case
+
+        noWhite = self.process_patterns(noWhite)
+
         for p in self.patterns:
 
             match = re.match(p["pattern"], noWhite) # match this pattern
@@ -304,6 +337,8 @@ class CommandParser:
                 elif param == "channel_range":
                     rng = ChannelRangeParser(toAdd, self.controller)
                     toAdd = ChannelSet(rng.set)
+                elif param == "time":
+                    toAdd = parser.parse(toAdd)
 
             # Increment i if we aren't skipping this one
             if param != "skip":
@@ -313,6 +348,14 @@ class CommandParser:
         # print "Args %s " % args
         return func(args) # Call the function
 
+    def process_patterns(self, command):
+        final = command
+        for shortcut in self.shortcuts:
+            replace = shortcut.replace(command)
+            if replace != False:
+                final = replace
+
+        return final
 
 
     # ------------------ Custom Parsing Functions ----------------------
@@ -473,4 +516,13 @@ class CommandParser:
             return default
 
 
+    def define_shortcut(self, args):
+        if len(args) < 2:
+            return "Not enough arguments"
 
+        shortcut = args[0]
+        command = args[1]
+
+        short = CommandShortcut(shortcut, command)
+        self.shortcuts.append(short)
+        return "Defined new shortcut"

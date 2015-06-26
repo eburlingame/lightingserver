@@ -32,5 +32,9 @@ save sequence rgb fade 10 wait 0 { 1 + 4 * 100, 3 + 2 * 0 }
 #WRITING
 write
 
-#SERVER
-start server
+
+define "# half" as "[0] at 50"
+
+save scene test { 1 * 100 }
+
+schedule "load scene test" at 14:06:30

@@ -4,6 +4,7 @@ from channel_set import *
 from group import *
 from scene import *
 from sequence import *
+from schedule import *
 
 # Helper functions:
 
@@ -31,9 +32,6 @@ class Controller:
     # Lowercase refer to a generic type
     # ~ denotes an optional field
     # [Function]_list takes arguments as a list
-
-
-
 
 
     # ------------------ Patching ----------------------
@@ -161,7 +159,7 @@ class Controller:
         name    = required_arg(args, 0, "A name must be supplied")
         fade    = optional_arg(args, 1, -1)
 
-        channelSet = self.patch.get_active_channel_set()
+        channelSet = self.patch.get_active_channel_set(self)
 
         return self.save_scene_current_set(name, fade, channelSet)
 
@@ -614,6 +612,40 @@ class Controller:
         return "Sequence %s deleted" % name
 
 
+    # ------------------ Scheduleing ----------------------
+
+    def schedule_command(self, command, time):
+        return self.schedule_command_list((command, time))
+    def schedule_command_list(self, args):
+        command = required_arg(args, 0, "A command must be supplied")
+        time    = required_arg(args, 1, "A datetime must be supplied")
+
+        schedule = Schedule(command, time)
+        self.schedules.append(schedule)
+
+        strtime = time.strftime("%H:%M:%S")
+        return "New schedule saved for %s" % strtime
+
+    def delete_schedule(self, time):
+        return self.delete_schedule((time))
+    def delete_schedule_list(self, args):
+        time    = required_arg(args, 0, "A datetime must be supplied")
+
+        for schedule in self.schedules:
+            if schedule.matches(time):
+                self.schedules.remove(schedule)
+
+        strtime = time.strftime("%H:%M:%S")
+        return "Removed scheudles starting at %s " % strtime
+
+    def list_schedules(self):
+        return self.list_schedules([ ])
+    def list_schedules_list(self, args):
+        toRet = "Currently saved scheduled commands:"
+        for schedule in self.schedules:
+            toRet += "\n\t" + schedule.to_string()
+        return toRet
+
 
 
     # ------------------ Util Functions ----------------------
@@ -624,6 +656,14 @@ class Controller:
             if runner.done:
                 self.sequenceRunners.remove(runner)
         self.patch.update_channels(diff)
+        self.check_time()
+
+    def check_time(self):
+        for schedule in self.schedules:
+            if schedule.time_matches():
+                self.main.run_command(schedule.command)
+                print "Running scheduled command '%s'" % schedule.command
+
 
     def to_commands(self):
         str = "#PATCH:"
@@ -647,17 +687,19 @@ class Controller:
 
         return str
 
-    def __init__(self):
+    def __init__(self, main):
         self.patch = Patch()
         self.lastSelected       = ChannelSet()
         self.groups             = []
         self.scenes             = []
         self.sequences          = []
         self.sequenceRunners    = []
+        self.schedules          = []
 
         self.defaultFade = 3
         self.defaultWait = 3
 
+        self.main = main
 
 
 

@@ -6,10 +6,6 @@ from command_parser import CommandParser
 from controller import Controller
 from server import WSServer
 
-controller = Controller()
-command = CommandParser(controller)
-dmxOut = DmxOutput(controller)
-
 
 class colors:
     HEADER = '\033[95m'
@@ -25,6 +21,9 @@ class Main:
 
     def __init__(self):
         print "LightingServer starting..."
+        self.controller = Controller(self)
+        self.command = CommandParser(self.controller)
+        self.dmxOut = DmxOutput(self.controller)
 
         self.wd = os.path.dirname(os.path.realpath(__file__))
         self.startPath = self.wd + "/../start.txt"
@@ -66,6 +65,7 @@ class Main:
             return self.start_server()
 
         else:
+            # return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
             try:
                 if print_colors:
                     return colors.OKGREEN + command.runCommand(cmd) + colors.ENDC
@@ -96,7 +96,7 @@ class Main:
         return "Loaded file %s:" % file.name
 
     def write_file(self, filepath):
-        toWrite = controller.to_commands()
+        toWrite = self.controller.to_commands()
         file = open(filepath, 'w')
         file.write(toWrite)
         file.close()
