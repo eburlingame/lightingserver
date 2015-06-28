@@ -24,7 +24,7 @@ class DmxOutput(object):
         self.thread.daemon = True                            # Daemonize thread
         self.thread.start()                                  # Start the execution
         print "Waiting to initialize..."
-        time.sleep(10)
+        time.sleep(1)
         str =  "Starting interface output thread"
         if _platform == "linux2": # If we're on a raspberry pi
             # self.reset_usb()
