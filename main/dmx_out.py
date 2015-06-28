@@ -9,12 +9,17 @@ OFFSET = 0.00001
 class DmxOutput(object):
 
     def __init__(self, controller):
-
         self.controller = controller
 
-        thread = threading.Thread(target=self.run, args=())
-        thread.daemon = True                            # Daemonize thread
-        thread.start()                                  # Start the execution
+    def start(self):
+        self.running = True
+        self.thread = threading.Thread(target=self.run, args=())
+        self.thread.daemon = True                            # Daemonize thread
+        self.thread.start()                                  # Start the execution
+
+    def stop(self):
+        self.running = False
+        self.thread = None
 
 
     def run(self):
@@ -26,7 +31,7 @@ class DmxOutput(object):
             wrapper.Stop()
 
         elapsed = 0.01
-        while True:
+        while self.running:
             start = time.time()
             self.controller.update(elapsed + OFFSET)
 

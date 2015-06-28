@@ -122,5 +122,6 @@ class Patch:
     def update_channels(self, diff):
         for channel in self.channels:
             channel.update(diff)
-            self.dmx[channel.dmxAddr - 1] = to_255(channel.value)
+            if channel.dmxAddr <= len(self.dmx):
+                self.dmx[channel.dmxAddr - 1] = to_255(channel.value)
 

@@ -64,6 +64,13 @@ class Main:
         elif re.match("startserver", noWhite):
             return self.start_server()
 
+        elif re.match("open", noWhite):
+            return self.open_interface()
+        elif re.match("close", noWhite):
+            return self.close_interface()
+
+
+
         else:
             # return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
             try:
@@ -107,6 +114,17 @@ class Main:
         port = 8080
         server = WSServer(self, port)
         return "Server started on port %s" % server.port
+
+
+    def open_interface(self):
+        self.dmxOut.start()
+        return "DMX interface output started"
+
+    def close_interface(self):
+        self.dmxOut.stop()
+        return "DMX interface output stopped"
+
+
 
 
 main = Main()
