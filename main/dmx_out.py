@@ -29,8 +29,16 @@ class DmxOutput(object):
 
     # Some interfaces (Enttec DMX USB Pro) need to be reset and re-recognized by OLA
     def reset_usb(self):
-        cmd = "$(lsusb -d 12d1:1506 | awk -F '[ :]'  '{ print \"/dev/bus/usb/\"$2\"/\"$4 }' | xargs -I {} echo \"~/./usbreset {}\")"
-        os.system(cmd)
+        # cmd = "$(lsusb -d 12d1:1506 | awk -F '[ :]'  '{ print \"/dev/bus/usb/\"$2\"/\"$4 }' | xargs -I {} echo \"~/./usbreset {}\")"
+        for i in range(0, 20): # Cycle all ports 1-20
+            bus = "001"
+            port = ""
+            if i < 10:
+                port = "00" + str(i)
+            else:
+                port = "0" + str(i)
+            cmd = "./usbreset /dev/bus/usb/%s/%s"
+            os.system(cmd)
 
     def stop(self):
         self.running = False
