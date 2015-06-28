@@ -34,6 +34,8 @@ class DmxOutput(object):
         return "Stopping interface output thread"
 
     def search_and_open(self):
+        dmx = DmxPy('/dev/tty.usbserial-00002014')
+        return dmx
         for i in range(0, 2):
             try:
                 dmx = DmxPy('/dev/ttyUSB%s' % str(i))
@@ -45,7 +47,6 @@ class DmxOutput(object):
 
     def run(self):
         """ Method that runs forever """
-
         elapsed = 0.01
         while self.running:
             start = time.time()
@@ -55,8 +56,7 @@ class DmxOutput(object):
             for val in self.controller.patch.dmx:
                 i += 1
                 val = int(val)
-                self.dmxout.setChannel(i, val)
-
+                self.dmxout.dmxData[i] = chr(val)
             self.dmxout.render()
 
             end = time.time()
