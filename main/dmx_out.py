@@ -27,8 +27,9 @@ class DmxOutput(object):
         time.sleep(10)
         str =  "Starting interface output thread"
         if _platform == "linux2": # If we're on a raspberry pi
-            self.reset_usb()
-            str += "; Resetting usb"
+            # self.reset_usb()
+            # str += "; Resetting usb"
+            pass
         return str
 
     # Some interfaces (Enttec DMX USB Pro) need to be reset and re-recognized by OLA

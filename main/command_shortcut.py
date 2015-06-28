@@ -16,9 +16,10 @@ class CommandShortcut:
         args = re.findall(self.pattern, command)
         if not args:
             return False
-        args = args[0]
-
+        # args = args[0]
+        print args
         if len(args) != self.args_count:
+            print "%s vs %s" % (len(args), self.args_count)
             return "Arugment mismatch"
 
         for i in range(0, self.args_count):

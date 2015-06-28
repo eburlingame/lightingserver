@@ -34,7 +34,7 @@ class CommandParser:
         },
 
 
-        # Scheudling
+        # Scheduling
 
         {
             # schedule "[command]" at [time]
@@ -354,6 +354,7 @@ class CommandParser:
             replace = shortcut.replace(command)
             if replace != False:
                 final = replace
+                print "MATCHED: %s" % final
 
         return final
 
