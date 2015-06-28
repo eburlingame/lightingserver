@@ -6,7 +6,6 @@ from sys import platform as _platform
 
 import threading
 import time
-import array
 from DmxPy import *
 
 
