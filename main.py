@@ -3,9 +3,9 @@ import os
 import re
 
 from output.dmx_out_serial import DmxOutput
-from command_parser import CommandParser
-from controller import Controller
-from server import WSServer
+from main.command_parser import CommandParser
+from main.controller import Controller
+from main.server import WSServer
 
 
 class colors:
