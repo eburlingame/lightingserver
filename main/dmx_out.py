@@ -37,7 +37,7 @@ class DmxOutput(object):
                 port = "00" + str(i)
             else:
                 port = "0" + str(i)
-            cmd = "./usbreset /dev/bus/usb/%s/%s"
+            cmd = "~/./usbreset /dev/bus/usb/%s/%s"
             os.system(cmd)
 
     def stop(self):
