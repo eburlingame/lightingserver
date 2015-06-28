@@ -2,7 +2,7 @@ __author__ = 'Eric Burlingame'
 import os
 import re
 
-from output.dmx_out_serial import *
+from output.dmx_out_serial import DmxOutput
 from command_parser import CommandParser
 from controller import Controller
 from server import WSServer
