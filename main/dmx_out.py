@@ -18,9 +18,9 @@ class DmxOutput(object):
 
     def start(self):
         str = ""
-        if _platform == "linux2": # If we're on a raspberry pi
-            self.reset_usb()
-            str += "Resetting usb; "
+        # if _platform == "linux2": # If we're on a raspberry pi
+            # self.reset_usb()
+            # str += "Resetting usb; "
 
         self.running = True
         self.thread = threading.Thread(target=self.run, args=())
