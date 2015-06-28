@@ -68,9 +68,9 @@ class Main:
             # return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
             try:
                 if print_colors:
-                    return colors.OKGREEN + command.runCommand(cmd) + colors.ENDC
+                    return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
                 else:
-                    return command.runCommand(cmd)
+                    return self.command.runCommand(cmd)
             except Exception, e:
                 if print_colors:
                     return colors.WARNING + e.message + colors.ENDC
