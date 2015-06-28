@@ -6,7 +6,7 @@ from sys import platform as _platform
 
 import threading
 import time
-from DmxPy import *
+from output.DmxPy import *
 
 
 OFFSET = 0.00001
