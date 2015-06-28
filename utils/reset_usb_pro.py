@@ -30,7 +30,7 @@ if match:
     out, err = p.communicate()
     print out
 else:
-    "Output did not match expected format"
+    print "Output did not match expected format"
 
 
 
