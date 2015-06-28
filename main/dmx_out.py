@@ -40,7 +40,7 @@ class DmxOutput(object):
                 port = "0" + str(i)
             file = "/dev/bus/usb/%s/%s" % (bus, port)
             FNULL = open(os.devnull, 'w')
-            subprocess.call(["~/./usbreset" + file], shell=True)
+            subprocess.call(["~/./usbreset " + file], shell=True)
 
     def stop(self):
         self.running = False
