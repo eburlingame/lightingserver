@@ -19,7 +19,7 @@ if err != "":
 
 print "Found: %s" % out
 
-pattern = "Bus (\d+) Device (\d+): ID:(\d+):(\d+) (.+)"
+pattern = "Bus (\d+) Device (\d+): ID (\d+):(\d+) (.+)"
 match = re.match(pattern, out)
 if match:
     groups = match.groups()
