@@ -24,6 +24,5 @@ save group led2 channels 6/10
 save scene leds_full fade 4 { group leds at 100 }
 
 write
-read
 
-start server
+open
