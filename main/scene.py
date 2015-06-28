@@ -41,5 +41,5 @@ class Scene:
         str = "save scene %s " % self.name
         if self.fade != -1:
             str += " fade %s " % self.fade
-        str += "channel { %s }" % self.channelState.to_string()
+        str += " { %s } \n" % self.channelState.to_string()
         return str
