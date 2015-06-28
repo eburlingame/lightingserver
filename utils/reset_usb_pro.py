@@ -30,6 +30,7 @@ if match:
     p = subprocess.Popen(['sudo', '~/./usbreset', addr], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     print out
+    print err
 else:
     print "Output did not match expected format"
 
