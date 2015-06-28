@@ -54,6 +54,7 @@ class DmxOutput(object):
             i = 0
             for val in self.controller.patch.dmx:
                 i += 1
+                val = int(val)
                 self.dmxout.setChannel(i, val)
 
             self.dmxout.render()
