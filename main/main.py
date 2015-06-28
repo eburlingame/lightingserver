@@ -117,12 +117,10 @@ class Main:
 
 
     def open_interface(self):
-        self.dmxOut.start()
-        return "DMX interface output started"
+        return self.dmxOut.start()
 
     def close_interface(self):
-        self.dmxOut.stop()
-        return "DMX interface output stopped"
+        return self.dmxOut.stop()
 
 
 
