@@ -17,6 +17,8 @@ out, err = p.communicate()
 if err != "":
     print "Could not find DMX USB Pro, Error: %s" % err
 
+print "Found: %s" % out
+
 pattern = "Bus (\d+) Device (\d+): ID:(\d+):(\d+) (.+)"
 match = re.match(pattern, out)
 if match:
