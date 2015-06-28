@@ -16,6 +16,9 @@ out, err = p.communicate()
 
 if err != "":
     print "Could not find DMX USB Pro, Error: %s" % err
+if out == "":
+    print "Could not find DMX USB Pro, Error: %s" % err
+
 
 print "Found: %s" % out
 
