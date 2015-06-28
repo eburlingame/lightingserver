@@ -1,6 +1,7 @@
 __author__ = 'Eric Burlingame'
 
-from subprocess import call
+import subprocess
+import os
 from sys import platform as _platform
 
 import threading
@@ -38,7 +39,8 @@ class DmxOutput(object):
             else:
                 port = "0" + str(i)
             file = "/dev/bus/usb/%s/%s" % (bus, port)
-            call(["~/./usbreset", file])
+            FNULL = open(os.devnull, 'w')
+            subprocess.call(["~/./usbreset", file], stdout=FNULL, stderr=subprocess.STDOUT)
 
     def stop(self):
         self.running = False
