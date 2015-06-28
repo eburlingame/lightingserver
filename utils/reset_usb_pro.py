@@ -26,6 +26,7 @@ if match:
     bus = groups[0]
     port = groups[1]
     addr = "/dev/bus/usb/%s/%s" % (bus, port)
+    print "Running: %s %s %s" % ('sudo', '~/./usbreset', addr)
     p = subprocess.Popen(['sudo', '~/./usbreset', addr], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     print out
