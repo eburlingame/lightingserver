@@ -27,8 +27,8 @@ class Main:
         self.dmxOut = DmxOutput(self.controller)
 
         self.wd = os.path.dirname(os.path.realpath(__file__))
-        self.startPath = self.wd + "/start.txt"
-        self.dataPath = self.wd + "/data.txt"
+        self.startPath = self.wd + "start.txt"
+        self.dataPath = self.wd + "data.txt"
 
         self.read_file(self.startPath)
 
