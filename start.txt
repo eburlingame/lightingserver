@@ -2,3 +2,4 @@ read
 open
 
 load scene test
+start server

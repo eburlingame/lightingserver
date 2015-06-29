@@ -24,6 +24,7 @@ class WSServer:
         self.CommandWebSocket = CommandWebSocket
         self.CommandWebSocket.main = self.main
 
+
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True                            # Daemonize thread
         thread.start()
@@ -38,7 +39,8 @@ class WSServer:
         class Root(object):
             @cherrypy.expose
             def index(self):
-                return 'some HTML with a websocket javascript connection'
+                commandMarkup = open("../web/command.html").read()
+                return commandMarkup
 
             @cherrypy.expose
             def ws(self):

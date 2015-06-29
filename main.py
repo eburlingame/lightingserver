@@ -47,6 +47,7 @@ class Main:
 
     def parse_command(self, cmd, print_colors = True):
         noWhite = re.sub("\s", "", cmd).lower()
+
         if re.match("quit", noWhite):
           self.quit()
 
