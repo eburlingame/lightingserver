@@ -1,0 +1,25 @@
+#PATCH:
+patch channel 1 dmx 1 fixture led1 
+patch channel 2 dmx 2 fixture led1 
+patch channel 3 dmx 3 fixture led1 
+patch channel 4 dmx 4 fixture led1 
+patch channel 5 dmx 5 fixture led2 
+patch channel 6 dmx 6 fixture led2 
+patch channel 7 dmx 7 fixture led2 
+patch channel 8 dmx 8 fixture led2 
+patch channel 9 dmx 9 fixture par_blue 
+patch channel 10 dmx 10 fixture par_red 
+patch channel 11 dmx 11 fixture par_cyan 
+patch channel 12 dmx 12 fixture par_lav 
+
+#GROUPS:
+save group leds channel 1 thru 10 
+save group led1 channel 1 thru 5 
+save group led2 channel 6 thru 10 
+
+#SCENES:
+save scene test  { 1 thru 4 at 100 } 
+save scene bo  { 1 thru 20 at 0 } 
+save scene par  { 9 thru 12 at 100 } 
+
+#SEQUENCES:
