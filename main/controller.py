@@ -307,7 +307,7 @@ class Controller:
 
         self.patch.set_channel_state(state)
         self.update(0.001)
-        return "Set to %s " % value
+        return state.to_string()
 
     def last_at(self, value):
         return self.last_at_list((value))
@@ -319,7 +319,7 @@ class Controller:
 
         self.patch.set_channel_state(state)
         self.update(0.001)
-        return "Set to %s " % value
+        return state.to_string()
 
     # Takes (ChannelSet, value)
     def set_at(self, channelSet, value):
@@ -335,7 +335,7 @@ class Controller:
 
         self.patch.set_channel_state(state)
         self.update(0.001)
-        return "Set to %s " % value
+        return state.to_string()
 
     # Takes (ChannelState)
     def at(self, channelState):
@@ -351,7 +351,7 @@ class Controller:
 
         self.patch.set_channel_state(channelState)
         self.update(0.001)
-        return "Set to %s " % value
+        return channelState.to_string()
 
 
 
