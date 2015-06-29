@@ -39,7 +39,7 @@ class WSServer:
         class Root(object):
             @cherrypy.expose
             def index(self):
-                commandMarkup = open("../web/command.html").read()
+                commandMarkup = open("web/command.html").read()
                 return commandMarkup
 
             @cherrypy.expose
