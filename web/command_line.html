@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Command Line</title>
+    <script type="application/javascript" src="fast-click/lib/fastclick.js"></script>
+</head>
+<body>
+
+<!--Open	Close	Read 	Write	Schedule	Server	Start-->
+<!--Patch	One2One	Define	As	All	ID	Stop-->
+<!--Fixture	Channel	DMX	{	}	;	,-->
+<!--Load	Unload	Pause	Unpause	Full	Insert	-->
+<!--Save	%	Thru	At	Except	Cued	-->
+<!--Group	7	8	9	And	Step	-->
+<!--Sequence	4	5	6	Enter	Wait	List-->
+<!--Scene	1	2	3		Fade	Print-->
+
+<div id="container">
+    <table>
+        <tr>
+            <td colspan="7" style="height: 20%">
+                <textarea></textarea>
+                <input type="text" style="width: 100%">
+            </td>
+        </tr>
+        <tr>
+            <td><button class="util" ontouchstart="">Open</button></td>
+            <td><button class="util">Close</button></td>
+            <td><button class="util">Read</button></td>
+            <td><button class="util">Write</button></td>
+            <td><button class="util">Schedule</button></td>
+            <td><button class="util">Server</button></td>
+            <td><button class="util">Start</button></td>
+        </tr>
+        <tr>
+            <td><button class="util">Patch</button></td>
+            <td><button class="util">One-to-One</button></td>
+            <td><button class="util">Define</button></td>
+            <td><button class="util">As</button></td>
+            <td><button class="util">All</button></td>
+            <td><button class="util">ID</button></td>
+            <td><button class="util">Stop</button></td>
+        </tr>
+        <tr>
+            <td><button class="type">Fixture</button></td>
+            <td><button class="type">Channel</button></td>
+            <td><button class=x"type">DMX</button></td>
+            <td><button class="symbols">{</button></td>
+            <td><button class="symbols">}</button></td>
+            <td><button class="symbols">;</button></td>
+            <td><button class="symbols">,</button></td>
+        </tr>
+        <tr>
+            <td><button class="sequence-running">Load</button></td>
+            <td><button class="sequence-running">Unload</button></td>
+            <td><button class="sequence-running">Pause</button></td>
+            <td><button class="sequence-running">Unpause</button></td>
+            <td><button class="sequence-running">Advance</button></td>
+            <td></td>
+            <td><button class="sequence-options">Insert</button></td>
+        </tr>
+        <tr>
+            <td><button class="save">Save</button></td>
+            <td><button class="basic-control">%</button></td>
+            <td><button class="basic-control">Thru</button></td>
+            <td><button class="basic-control">At</button></td>
+            <td><button class="basic-control">Except</button></td>
+            <td><button class="basic-control">Full</button></td>
+            <td><button class="sequence-options">Cued</button></td>
+        </tr>
+        <tr>
+            <td><button class="util">Group</button></td>
+            <td><button class="numbers">7</button></td>
+            <td><button class="numbers">8</button></td>
+            <td><button class="numbers">9</button></td>
+            <td><button class="basic-control">And</button></td>
+            <td><button class="printing">Clear</button></td>
+            <td><button class="sequence-options">Step</button></td>
+        </tr>
+        <tr>
+            <td><button class="util">Sequence</button></td>
+            <td><button class="numbers">4</button></td>
+            <td><button class="numbers">5</button></td>
+            <td><button class="numbers">6</button></td>
+            <td rowspan="3"><button class="enter">Enter</button></td>
+            <td><button class="printing">List</button></td>
+            <td><button class="sequence-options">Wait</button></td>
+        </tr>
+        <tr>
+            <td><button class="util">Scene</button></td>
+            <td><button class="numbers">1</button></td>
+            <td><button class="numbers">2</button></td>
+            <td><button class="numbers">3</button></td>
+            <td><button class="printing">Print</button></td>
+            <td><button class="sequence-options">Fade</button></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2"><button class="numbers" >0</button></td>
+            <td><button class="numbers">.</button></td>
+        </tr>
+    </table>
+</div>
+</body>
+<style>
+    #container
+    {
+        height: 100%;
+        min-height: 100%;
+    }
+    table
+    {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height:100%;
+        table-layout: fixed;
+    }
+    tr
+    {
+        border: solid black 1px;
+        table-layout: fixed;
+        height: 9%;
+    }
+    td
+    {
+        border: solid black 1px;
+        table-layout: fixed;
+        width: 14.3%;
+        padding: 0px;
+    }
+
+    button
+    {
+        width: 100%;
+        height: 100%;
+        font-size: 15px;
+        -webkit-appearance: none;
+    }
+
+    button:active
+    {
+        background-color: #FFFFFF;
+    }
+
+    input
+    {
+        height: 20%;
+    }
+
+    textarea
+    {
+        width: 100%;
+        height: 80%;
+    }
+
+    /* Color Styles */
+    .util
+    {
+        background-color: #F1F1F1;
+    }
+    .type
+    {
+        background-color: #c0d2f5;
+    }
+    .symbols
+    {
+        background-color: #f0c2c3;
+    }
+    .sequence-running
+    {
+        background-color: #fdf0c3;
+    }
+    .sequence-options
+    {
+        background-color: #d1c8e3;
+    }
+    .save
+    {
+        background-color: #c7dadc;
+    }
+    .basic-control
+    {
+        background-color: #e4c7d5;
+    }
+    .printing
+    {
+        background-color: #f9dfc4;
+    }
+    .save-types
+    {
+        background-color: #d2e6ca;
+    }
+    .numbers
+    {
+        background-color: #c6dcf0;
+    }
+    .enter
+    {
+        background-color: #0b0b0b;
+        color: #FFFFFF;
+    }
+
+</style>
+<script>
+if ('addEventListener' in document) {
+    document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body);
+    }, false);
+}
+</script>
+</html>

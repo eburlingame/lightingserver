@@ -6,26 +6,61 @@
 </head>
 <body>
 
-<input type="text" id="command_box" onkeydown="keydown(event)" />
+<div style="text-align: center">
+    Server:
+    <input style="width: 20%" type="text" value="localhost:8080/ws" id="server_addr" onkeydown="changeAddress(event)" />
+    <br />
+    <input style="width: 30%" type="text" id="command_box" onkeydown="keydown(event)" />
+    <button onclick="send_message()">Go</button>
+</div>
+<div id="log" style="text-align: center">
+
+</div>
 
 </body>
 <script>
-    var socket = new WebSocket("ws://localhost:9000/ws");
+    var address = "ws://" + document.getElementById("server_addr").value
+
+    var socket = new WebSocket(address);
+    print("Connected to server " + address)
+
     socket.onmessage = function (event)
     {
-        console.log(event.data);
+        var response = event.data;
+        print(response)
+    };
+    function print(str)
+    {
+        console.log(str);
+        var response = "<span>" + str + "</span><br />";
+        el = document.getElementById("log");
+        el.innerHTML = el.innerHTML + response;
+    }
+    function changeAddress(e)
+    {
+        if(e.keyCode == 13)
+        {
+            var address = "ws://" + document.getElementById("server_addr").value;
+            socket = new WebSocket(address);
+            print("Connected to server " + address)
+        }
+        return true;
     }
     function keydown(e)
     {
         if(e.keyCode == 13)
         {
-            console.log("ENTER");
-            el = document.getElementById("command_box")
-            command = el.value;
-            socket.send(command);
+            send_message();
             return false; // returning false will prevent the event from bubbling up.
         }
         return true;
+    }
+    function send_message()
+    {
+        var el = document.getElementById("command_box");
+        command = el.value;
+        el.value = "";
+        socket.send(command);
     }
 
 </script>
