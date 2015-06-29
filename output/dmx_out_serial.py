@@ -37,7 +37,7 @@ class DmxOutput(object):
         p = subprocess.Popen(['ls /dev/tty* | grep -i usb'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         lines = out.split("\n")
-        print lines
+        # print lines
         for line in lines:
             try:
                 dmx = DmxPy(line)
