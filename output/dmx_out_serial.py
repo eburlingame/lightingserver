@@ -34,7 +34,7 @@ class DmxOutput(object):
         return "Stopping interface output thread"
 
     def search_and_open(self):
-        p = subprocess.Popen(['ls /dev/tty* | grep usb'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(['ls /dev/tty* | grep -i usb'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         lines = out.split("\n")
         for line in lines:
