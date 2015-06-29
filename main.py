@@ -46,9 +46,9 @@ class Main:
         return response
 
     def parse_command(self, cmd, print_colors = True):
-        noWhite = re.sub("\s", "", cmd)
+        noWhite = re.sub("\s", "", cmd).lower()
         if re.match("quit", noWhite):
-          exit()
+          self.quit()
 
         elif re.match("read(.+)", noWhite):
             match = re.match("read(.+)", noWhite)
@@ -110,12 +110,10 @@ class Main:
         file.close()
         return "Wrote file %s " % filepath
 
-
     def start_server(self):
         port = 8080
         server = WSServer(self, port)
         return "Server started on port %s" % server.port
-
 
     def open_interface(self):
         return self.dmxOut.start()
@@ -123,7 +121,9 @@ class Main:
     def close_interface(self):
         return self.dmxOut.stop()
 
-
+    def quit(self):
+        self.dmxOut.stop()
+        quit(0)
 
 
 main = Main()

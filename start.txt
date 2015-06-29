@@ -1,2 +1,4 @@
 read
 open
+
+load scene test

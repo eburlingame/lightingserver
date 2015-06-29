@@ -25,20 +25,21 @@ class DmxOutput(object):
         self.thread = threading.Thread(target=self.run, args=())
         self.thread.daemon = True                            # Daemonize thread
         self.thread.start()                                  # Start the execution
-        return "Starting interface output thread"
+        return "Starting interface output thread on " + self.dmxout.serialPort
 
 
     def stop(self):
         self.running = False
-        self.thread = None
+        self.dmxout.close()
         return "Stopping interface output thread"
 
     def search_and_open(self):
-        dmx = DmxPy('/dev/tty.usbserial-00002014')
-        return dmx
-        for i in range(0, 2):
+        p = subprocess.Popen(['ls /dev/tty* | grep usb'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        lines = out.split("\n")
+        for line in lines:
             try:
-                dmx = DmxPy('/dev/ttyUSB%s' % str(i))
+                dmx = DmxPy(line)
                 return dmx
             except:
                 pass
@@ -58,6 +59,9 @@ class DmxOutput(object):
                 val = int(val)
                 self.dmxout.dmxData[i] = chr(val)
             self.dmxout.render()
+
+            # Sometimes sending fewer packets makes fades smoother, go figure
+            # time.sleep(0.03)
 
             end = time.time()
             elapsed = end - start
