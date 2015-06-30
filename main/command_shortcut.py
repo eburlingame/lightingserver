@@ -10,16 +10,17 @@ class CommandShortcut:
         escaped = re.escape(self.shortcut)
         self.pattern = "^" + re.sub("\\\#", "(.+?)", escaped) + "$"
         self.args_count = self.shortcut.count('#')
+        print "Pattern %s" % self.pattern
 
     def replace(self, command):
         final = self.command
-        args = re.findall(self.pattern, command)
-        if not args:
+        match = re.match(self.pattern, command)
+        if not match:
             return False
-        # args = args[0]
-        print args
+
+        args = match.groups()
+
         if len(args) != self.args_count:
-            print "%s vs %s" % (len(args), self.args_count)
             return "Arugment mismatch"
 
         for i in range(0, self.args_count):

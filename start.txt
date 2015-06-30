@@ -3,3 +3,8 @@ open
 
 load scene test
 start server
+
+save scene bo { 1/20 * 0 }
+
+define "bo" as "load scene bo"
+bo

@@ -354,7 +354,7 @@ class CommandParser:
             replace = shortcut.replace(command)
             if replace != False:
                 final = replace
-                print "MATCHED: %s" % final
+                # print "MATCHED: %s" % final
 
         return final
 
@@ -515,7 +515,6 @@ class CommandParser:
             return True
         else:
             return default
-
 
     def define_shortcut(self, args):
         if len(args) < 2:
