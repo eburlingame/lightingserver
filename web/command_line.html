@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Command Line</title>
     <script type="application/javascript" src="fast-click/lib/fastclick.js"></script>
+    <script type="javascript" src="jquery-1.11.3.min.js"></script>
 </head>
 <body>
 
@@ -22,7 +23,7 @@
         <tr>
             <td colspan="7" style="height: 20%">
                 <textarea></textarea>
-                <input type="text" style="width: 100%">
+                <input type="text" style="width: 100%" id="command_input"/>
             </td>
         </tr>
         <tr>
@@ -58,8 +59,7 @@
             <td><button class="sequence-running">Pause</button></td>
             <td><button class="sequence-running">Unpause</button></td>
             <td><button class="sequence-running">Advance</button></td>
-            <td></td>
-            <td><button class="sequence-options">Insert</button></td>
+            <td colspan="2"></td>
         </tr>
         <tr>
             <td><button class="save">Save</button></td>
@@ -67,8 +67,8 @@
             <td><button class="basic-control">Thru</button></td>
             <td><button class="basic-control">At</button></td>
             <td><button class="basic-control">Except</button></td>
-            <td><button class="basic-control">Full</button></td>
-            <td><button class="sequence-options">Cued</button></td>
+            <td><button class="basic-control">Connect</button></td>
+            <td><button class="sequence-options">Insert</button></td>
         </tr>
         <tr>
             <td><button class="util">Group</button></td>
@@ -76,8 +76,8 @@
             <td><button class="numbers">8</button></td>
             <td><button class="numbers">9</button></td>
             <td><button class="basic-control">And</button></td>
-            <td><button class="printing">Clear</button></td>
-            <td><button class="sequence-options">Step</button></td>
+            <td><button class="basic-control">Full</button></td>
+            <td><button class="sequence-options">Cued</button></td>
         </tr>
         <tr>
             <td><button class="util">Sequence</button></td>
@@ -85,21 +85,23 @@
             <td><button class="numbers">5</button></td>
             <td><button class="numbers">6</button></td>
             <td rowspan="3"><button class="enter">Enter</button></td>
-            <td><button class="printing">List</button></td>
-            <td><button class="sequence-options">Wait</button></td>
+            <td><button class="printing">Clear</button></td>
+            <td><button class="sequence-options">Step</button></td>
         </tr>
         <tr>
             <td><button class="util">Scene</button></td>
             <td><button class="numbers">1</button></td>
             <td><button class="numbers">2</button></td>
             <td><button class="numbers">3</button></td>
-            <td><button class="printing">Print</button></td>
-            <td><button class="sequence-options">Fade</button></td>
+            <td><button class="printing">List</button></td>
+            <td><button class="sequence-options">Wait</button></td>
         </tr>
         <tr>
             <td></td>
             <td colspan="2"><button class="numbers" >0</button></td>
             <td><button class="numbers">.</button></td>
+            <td><button class="printing">Print</button></td>
+            <td><button class="sequence-options">Fade</button></td>
         </tr>
     </table>
 </div>
@@ -129,10 +131,10 @@
     }
     td
     {
-        border: solid black 1px;
+        /*border: solid black 1px;*/
         table-layout: fixed;
         width: 14.3%;
-        padding: 0px;
+        padding: 2px;
     }
 
     button
@@ -151,6 +153,7 @@
     input
     {
         height: 20%;
+        font-size: 100%;
     }
 
     textarea
@@ -208,10 +211,34 @@
 
 </style>
 <script>
-if ('addEventListener' in document) {
-    document.addEventListener('DOMContentLoaded', function() {
-        FastClick.attach(document.body);
-    }, false);
-}
+    if ('addEventListener' in document) {
+        document.addEventListener('DOMContentLoaded', function() {
+            FastClick.attach(document.body);
+        }, false);
+    }
+
+    function onKeypress(event)
+    {
+        if(e.keyCode == 13) // On enter press
+        {
+            runCommand()
+            return false; // returning false will prevent the event from bubbling up.
+        }
+        return true;
+    }
+
+
+    function connect()
+    {
+        var address = "ws://" + document.getElementById("server_addr").value
+        var socket = new WebSocket(address);
+        print("Connected to server " + address)
+    }
+
+    function runCommand()
+    {
+        command = $("command_input").val()
+
+    }
 </script>
 </html>
