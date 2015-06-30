@@ -3,6 +3,7 @@ import os
 import re
 
 from output.dmx_out_serial import DmxOutput
+from output.dummy_output import DummyOutput
 from main.command_parser import CommandParser
 from main.controller import Controller
 from main.server import WSServer
@@ -117,7 +118,13 @@ class Main:
         return "Server started on port %s" % server.port
 
     def open_interface(self):
-        return self.dmxOut.start()
+        self.dmxOut = DmxOutput(self.controller)
+        start = self.dmxOut.start()
+        if start == "Could not open DMX output on serial port":
+            self.dmxOut = DummyOutput(self.controller)
+            return start + "\n" + self.dmxOut.start()
+
+        return start
 
     def close_interface(self):
         return self.dmxOut.stop()
