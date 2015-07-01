@@ -1,6 +1,7 @@
 __author__ = 'eric'
 import cherrypy
 import threading
+import re
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import *
 
@@ -11,6 +12,8 @@ class CommandWebSocket(WebSocket):
 
     def received_message(self, message):
         response = self.main.run_server_command(message.data)
+        response = re.sub("\n", "<br />", response)
+        response = re.sub("\t", "&nbsp;", response)
         self.send(response, message.is_binary)
 
 
@@ -39,7 +42,7 @@ class WSServer:
         class Root(object):
             @cherrypy.expose
             def index(self):
-                commandMarkup = open("web/command.html").read()
+                commandMarkup = open("../web/command_line.html").read()
                 return commandMarkup
 
             @cherrypy.expose
