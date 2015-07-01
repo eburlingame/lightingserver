@@ -2,6 +2,7 @@ __author__ = 'eric'
 import cherrypy
 import threading
 import re
+import os
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import *
 
@@ -42,7 +43,10 @@ class WSServer:
         class Root(object):
             @cherrypy.expose
             def index(self):
-                commandMarkup = open("../web/command_line.html").read()
+                script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+                rel_path = "../web/command_line.html"
+                abs_file_path = os.path.join(script_dir, rel_path)
+                commandMarkup = open(abs_file_path).read()
                 return commandMarkup
 
             @cherrypy.expose
