@@ -106,7 +106,7 @@ class Main:
         return "Loaded file %s:" % file.name
 
     def write_file(self, filepath):
-        toWrite = self.controller.to_commands()
+        toWrite = self.controller.to_commands(self.command.shortcuts)
         file = open(filepath, 'w')
         file.write(toWrite)
         file.close()

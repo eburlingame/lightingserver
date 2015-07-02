@@ -159,7 +159,7 @@ class Sequence:
     def to_command(self):
         str = ""
         for step in self.steps:
-            str += step.to_command() + "\n"
+            str += step.to_command(self) + "\n"
         return str
 
 
@@ -171,13 +171,13 @@ class SequenceStep:
         self.number = number
         self.label = label
 
-    def to_string(self):
-        str = "Step #" + self.number + ": \n"
-        str += "\t Fade: %s" % self.fade
-        str += "\t Wait: %s" % self.wait
-        for state in self.channelState.states:
-            str += "\n\t\tChannel %s at %s" % (state["number"], state["value"])
-        return str
+    # def to_string(self):
+    #     str = "Step #" + self.number + ": \n"
+    #     str += "\t Fade: %s" % self.fade
+    #     str += "\t Wait: %s" % self.wait
+    #     for state in self.channelState.states:
+    #         str += "\n\t\tChannel %s at %s" % (state["number"], state["value"])
+    #     return str
 
     def get_channel_state(self, controller, percent):
         values = self.channelState.get_sorted_pairs()
@@ -203,8 +203,8 @@ class SequenceStep:
     def to_string(self):
         return "Step %s (Fade: %s, Wait: %s): %s" % (self.number, self.fade, self.wait, self.channelState.to_string())
 
-    def to_command(self):
-        str = "save sequence %s "
+    def to_command(self, sequence):
+        str = "save sequence %s " % sequence.name
         if self.fade != -1:
             str += "fade %s " % self.fade
         if self.wait != -1:

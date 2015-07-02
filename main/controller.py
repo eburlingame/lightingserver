@@ -665,7 +665,7 @@ class Controller:
                 print "Running scheduled command '%s'" % schedule.command
 
 
-    def to_commands(self):
+    def to_commands(self, shortcuts):
         str = "#PATCH:"
         str += self.patch.to_commands()
 
@@ -684,6 +684,11 @@ class Controller:
         str += "#SEQUENCES:\n"
         for sequence in self.sequences:
             str += sequence.to_command()
+
+        str += "\n"
+        str += "#SHORTCUTS:\n"
+        for shortcut in shortcuts:
+            str += shortcut.to_command()
 
         return str
 

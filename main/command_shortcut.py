@@ -27,3 +27,6 @@ class CommandShortcut:
             final = re.sub("\["+ str(i) + "\]", args[i], final)
 
         return final
+
+    def to_command(self):
+        return 'define "%s" as "%s"\n' % (self.shortcut, self.command)

@@ -22,7 +22,7 @@
         <tr>
             <td colspan="7" style="height: 20%">
                 <div id="log"></div>
-                <input type="text" id="command_input"/>
+                <input type="text" id="command_input" onkeydown="onKeypress(event)"/>
             </td>
         </tr>
         <tr>
@@ -230,7 +230,7 @@
 
 
         function onKeypress(event) {
-            if (e.keyCode == 13) // On enter press
+            if (event.keyCode == 13) // On enter press
             {
                 runCommand();
                 return false; // returning false will prevent the event from bubbling up.
@@ -246,7 +246,8 @@
             element.scrollTop = element.scrollHeight;
         }
 
-        var name = "192.168.0.20"
+        var name = "192.168.0.20";
+        var socket = null;
         function promtConnection()
         {
             name = prompt("Please enter the server address: ", name);
@@ -254,6 +255,10 @@
         }
 
         function connect() {
+            if (socket != null)
+            {
+                socket.close();
+            }
             var address = "ws://" + name + ":8080/ws";
             print("Attempting to connect at " + address);
             socket = new WebSocket(address);
