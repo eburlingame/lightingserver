@@ -246,7 +246,7 @@
             element.scrollTop = element.scrollHeight;
         }
 
-        var name = "192.168.0.20:8080/ws"
+        var name = "192.168.0.20"
         function promtConnection()
         {
             name = prompt("Please enter the server address: ", name);
@@ -254,7 +254,7 @@
         }
 
         function connect() {
-            var address = "ws://" + name;
+            var address = "ws://" + name + ":8080/ws";
             print("Attempting to connect at " + address);
             socket = new WebSocket(address);
 
