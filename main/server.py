@@ -44,7 +44,7 @@ class WSServer:
             @cherrypy.expose
             def index(self):
                 script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
-                rel_path = "../web/command_line.html"
+                rel_path = "../web/command.html"
                 abs_file_path = os.path.join(script_dir, rel_path)
                 commandMarkup = open(abs_file_path).read()
                 return commandMarkup
@@ -56,7 +56,10 @@ class WSServer:
 
 
 
-
-
+        web_path = os.path.dirname(__file__) #<-- absolute dir the script is in
+        web_path = os.path.join(web_path, "../web/")
+        print web_path
         cherrypy.quickstart(Root(), '/', config={'/ws': {'tools.websocket.on': True,
-                                                     'tools.websocket.handler_cls': self.CommandWebSocket}})
+                                                         'tools.websocket.handler_cls': self.CommandWebSocket,
+                                                         'tools.staticdir.on': True,
+                                                         'tools.staticdir.dir' : web_path}})
