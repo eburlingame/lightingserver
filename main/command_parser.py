@@ -228,15 +228,15 @@ class CommandParser:
             "params" : [ ]
         },
         {
-            # delete sequence [sequence name]
+            # delete sequence [sequence name] step [step number]
             "pattern": "delete(?:sequence)(.+?)(?:step)(\d+)",
             "function": self.controller.delete_sequence_step_list,
             "params" : [ "string", "int" ]
         },
         {
-            # delete sequence [sequence name] step [step number]
+            # delete sequence [sequence name]
             "pattern": "delete(?:sequence)(.+?)",
-            "function": self.controller.delete_sequence,
+            "function": self.controller.delete_sequence_list,
             "params" : [ "string" ]
         },
         {
