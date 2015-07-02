@@ -1,16 +1,51 @@
 #PATCH:
-patch channel 1 dmx 1 fixture led1 
-patch channel 2 dmx 2 fixture led1 
-patch channel 3 dmx 3 fixture led1 
-patch channel 4 dmx 4 fixture led1 
-patch channel 5 dmx 5 fixture led2 
-patch channel 6 dmx 6 fixture led2 
-patch channel 7 dmx 7 fixture led2 
-patch channel 8 dmx 8 fixture led2 
-patch channel 9 dmx 9 fixture par_blue 
-patch channel 10 dmx 10 fixture par_red 
-patch channel 11 dmx 11 fixture par_cyan 
-patch channel 12 dmx 12 fixture par_lav 
+
+patch channel 101 dmx 1 fixture led1
+patch channel 102 dmx 2 fixture led1
+patch channel 103 dmx 3 fixture led1
+patch channel 104 dmx 4 fixture led1
+patch channel 105 dmx 5 fixture led1
+patch channel 106 dmx 6 fixture led1
+patch channel 107 dmx 7 fixture led1
+patch channel 108 dmx 8 fixture led1
+patch channel 109 dmx 9 fixture led1
+patch channel 110 dmx 10 fixture led1
+patch channel 111 dmx 11 fixture led1
+patch channel 112 dmx 12 fixture led1
+patch channel 113 dmx 13 fixture led1
+
+patch channel 201 dmx 14 fixture led2
+patch channel 202 dmx 15 fixture led2
+patch channel 203 dmx 16 fixture led2
+patch channel 204 dmx 17 fixture led2
+patch channel 205 dmx 18 fixture led2
+patch channel 206 dmx 19 fixture led2
+patch channel 207 dmx 20 fixture led2
+patch channel 208 dmx 21 fixture led2
+patch channel 209 dmx 22 fixture led2
+patch channel 210 dmx 23 fixture led2
+patch channel 211 dmx 24 fixture led2
+patch channel 212 dmx 25 fixture led2
+patch channel 212 dmx 26 fixture led2
+
+patch channel 301 dmx 27 fixture led3
+patch channel 302 dmx 28 fixture led3
+patch channel 303 dmx 29 fixture led3
+patch channel 304 dmx 30 fixture led3
+patch channel 305 dmx 31 fixture led3
+patch channel 306 dmx 32 fixture led3
+patch channel 307 dmx 33 fixture led3
+patch channel 308 dmx 34 fixture led3
+patch channel 309 dmx 35 fixture led3
+patch channel 310 dmx 36 fixture led3
+patch channel 311 dmx 37 fixture led3
+patch channel 313 dmx 38 fixture led3
+patch channel 312 dmx 39 fixture led3
+
+patch channel 401 dmx 40 fixture par_blue
+patch channel 402 dmx 41 fixture par_red
+patch channel 403 dmx 42 fixture par_cyan
+patch channel 404 dmx 43 fixture par_lav
 
 #GROUPS:
 save group leds channel 1 thru 10 
