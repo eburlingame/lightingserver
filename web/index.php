@@ -26,7 +26,7 @@
             </td>
         </tr>
         <tr>
-            <td><button class="util" ontouchstart="addToCommand(' open', false)" onmousedown="addToCommand(' open', false)">Open</button></td>
+            <td><button class="util" ontouchstart="addToCommand(' open ', false)" onmousedown="addToCommand(' open ', false)">Open</button></td>
             <td><button class="util" ontouchstart="addToCommand(' close ', false)" onmousedown="addToCommand(' close ', false)">Close</button></td>
             <td><button class="util" ontouchstart="addToCommand(' read ', false)" onmousedown="addToCommand(' read ', false)">Read</button></td>
             <td><button class="util" ontouchstart="addToCommand(' write ', false)" onmousedown="addToCommand(' write ', false)">Write</button></td>
@@ -45,19 +45,19 @@
         </tr>
         <tr>
             <td><button class="type" onclick="addToCommand(' fixture ', true)">Fixture</button></td>
-            <td><button class="type" ontouchstart="addToCommand(' channel', false)" onmousedown="addToCommand(' channel', false)">Channel</button></td>
-            <td><button class=x"type" ontouchstart="addToCommand(' dmx', false)" onmousedown="addToCommand(' dmx', false)">DMX</button></td>
+            <td><button class="type" ontouchstart="addToCommand(' channel ', false)" onmousedown="addToCommand(' channel ', false)">Channel</button></td>
+            <td><button class=x"type" ontouchstart="addToCommand(' dmx ', false)" onmousedown="addToCommand(' dmx ', false)">DMX</button></td>
             <td><button class="symbols" ontouchstart="addToCommand(' { ', false)" onmousedown="addToCommand(' { ', false)">{</button></td>
             <td><button class="symbols" ontouchstart="addToCommand(' } ', false)" onmousedown="addToCommand(' } ', false)">}</button></td>
             <td><button class="symbols" ontouchstart="addToCommand(';', false)" onmousedown="addToCommand(';', false)">;</button></td>
             <td><button class="symbols" ontouchstart="addToCommand(' ,', false)" onmousedown="addToCommand(' ,', false)">,</button></td>
         </tr>
         <tr>
-            <td><button class="sequence-running" ontouchstart="addToCommand(' load', false)" onmousedown="addToCommand(' load', false)">Load</button></td>
-            <td><button class="sequence-running" ontouchstart="addToCommand(' unload', false)" onmousedown="addToCommand(' unload', false)">Unload</button></td>
-            <td><button class="sequence-running" ontouchstart="addToCommand(' pause', false)" onmousedown="addToCommand(' pause', false)">Pause</button></td>
-            <td><button class="sequence-running" ontouchstart="addToCommand(' unpause', false)" onmousedown="addToCommand(' unpause', false)">Unpause</button></td>
-            <td><button class="sequence-running" ontouchstart="addToCommand(' advance', false)" onmousedown="addToCommand(' advance', false)">Advance</button></td>
+            <td><button class="sequence-running" ontouchstart="addToCommand(' load ', false)" onmousedown="addToCommand(' load ', false)">Load</button></td>
+            <td><button class="sequence-running" ontouchstart="addToCommand(' unload ', false)" onmousedown="addToCommand(' unload ', false)">Unload</button></td>
+            <td><button class="sequence-running" ontouchstart="addToCommand(' pause ', false)" onmousedown="addToCommand(' pause ', false)">Pause</button></td>
+            <td><button class="sequence-running" ontouchstart="addToCommand(' unpause ', false)" onmousedown="addToCommand(' unpause ', false)">Unpause</button></td>
+            <td><button class="sequence-running" ontouchstart="addToCommand(' advance ', false)" onmousedown="addToCommand(' advance ', false)">Advance</button></td>
             <td><button class="symbols" ontouchstart="addToCommand('&quot;', false)" onmousedown="addToCommand('&quot;', false)">&quot;</button></td>
             <td><button class="symbols" ontouchstart="addToCommand(':', false)" onmousedown="addToCommand(':', false)">:</button></td>
         </tr>
@@ -68,7 +68,7 @@
             <td><button class="basic-control" ontouchstart="addToCommand(' at ', false)" onmousedown="addToCommand(' at ', false)">At</button></td>
             <td><button class="basic-control" ontouchstart="addToCommand(' except ', false)" onmousedown="addToCommand(' except ', false)">Except</button></td>
             <td><button class="printing" ontouchstart="backspace_command()" onmousedown="backspace_command()">Backspace</button></td>
-            <td><button class="sequence-options" ontouchstart="addToCommand(' insert', false)" onmousedown="addToCommand(' insert', false)">Insert</button></td>
+            <td><button class="sequence-options" ontouchstart="addToCommand(' insert ', false)" onmousedown="addToCommand(' insert ', false)">Insert</button></td>
         </tr>
         <tr>
             <td><button class="util" onclick="addToCommand(' group ', true)">Group</button></td>
@@ -77,7 +77,7 @@
             <td><button class="numbers" ontouchstart="addToCommand('9', false)" onmousedown="addToCommand('9', false)">9</button></td>
             <td><button class="basic-control" ontouchstart="addToCommand(' and ', false)" onmousedown="addToCommand(' and ', false)">And</button></td>
             <td><button class="basic-control" ontouchstart="addToCommand(' 100 ', false)" onmousedown="addToCommand(' 100 ', false)">Full</button></td>
-            <td><button class="sequence-options" ontouchstart="addToCommand(' cued', false)" onmousedown="addToCommand(' cued', false)">Cued</button></td>
+            <td><button class="sequence-options" ontouchstart="addToCommand(' cued ', false)" onmousedown="addToCommand(' cued ', false)">Cued</button></td>
         </tr>
         <tr>
             <td><button class="util" onclick="addToCommand(' sequence ', true)">Sequence</button></td>
@@ -86,7 +86,7 @@
             <td><button class="numbers" ontouchstart="addToCommand('6', false)" onmousedown="addToCommand('6', false)">6</button></td>
             <td rowspan="3"><button class="enter" ontouchstart="runCommand()" onmousedown="runCommand()">Enter</button></td>
             <td><button class="printing" ontouchstart="clear_command()" onmousedown="clear_command()">Clear</button></td>
-            <td><button class="sequence-options" ontouchstart="addToCommand('step ', false)" onmousedown="addToCommand('step ', false)">Step</button></td>
+            <td><button class="sequence-options" ontouchstart="addToCommand(' step ', false)" onmousedown="addToCommand(' step ', false)">Step</button></td>
         </tr>
         <tr>
             <td><button class="util" onclick="addToCommand('scene ', true)">Scene</button></td>
@@ -94,14 +94,14 @@
             <td><button class="numbers" ontouchstart="addToCommand('2', false)" onmousedown="addToCommand('2', false)">2</button></td>
             <td><button class="numbers" ontouchstart="addToCommand('3', false)" onmousedown="addToCommand('3', false)">3</button></td>
             <td><button class="printing" ontouchstart="addToCommand('list ', false)" onmousedown="addToCommand('list ', false)">List</button></td>
-            <td><button class="sequence-options" ontouchstart="addToCommand('wait ', false)" onmousedown="addToCommand('wait ', false)">Wait</button></td>
+            <td><button class="sequence-options" ontouchstart="addToCommand(' wait ', false)" onmousedown="addToCommand(' wait ', false)">Wait</button></td>
         </tr>
         <tr>
             <td></td>
             <td colspan="2"><button class="numbers" ontouchstart="addToCommand('0', false)" onmousedown="addToCommand('0', false)">0</button></td>
             <td><button class="numbers" ontouchstart="addToCommand('.', false)" onmousedown="addToCommand('.', false)">.</button></td>
-            <td><button class="printing" ontouchstart="addToCommand('print ', false)" onmousedown="addToCommand('print ', false)">Print</button></td>
-            <td><button class="sequence-options" ontouchstart="addToCommand('fade ', false)" onmousedown="addToCommand('fade ', false)">Fade</button></td>
+            <td><button class="printing" ontouchstart="addToCommand(' print ', false)" onmousedown="addToCommand(' print ', false)">Print</button></td>
+            <td><button class="sequence-options" ontouchstart="addToCommand(' fade ', false)" onmousedown="addToCommand(' fade ', false)">Fade</button></td>
         </tr>
     </table>
 </div>
