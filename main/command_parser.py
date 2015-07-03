@@ -306,13 +306,13 @@ class CommandParser:
         )
 
     def runCommand(self, command):
-        command = re.sub("\s", "", command) # remove whitespace
         command = command.lower() # make lower case
 
         # Don't replace shortcuts if we are trying to define or delete one
         if not re.match("(?:define)\"(.+?)\"as\"(.+?)\"", command) and not re.match("deleteshortcut\"(.+)\"", command):
             command = self.process_patterns(command)
 
+        command = re.sub("\s", "", command) # remove whitespace
         split = self.split_by_brackets(command)
         ret = ""
         for line in split:
