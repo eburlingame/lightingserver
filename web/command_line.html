@@ -102,6 +102,7 @@
             <td><button class="numbers" ontouchstart="addToCommand('.', false)" onmousedown="addToCommand('.', false)">.</button></td>
             <td><button class="printing" ontouchstart="addToCommand(' print ', false)" onmousedown="addToCommand(' print ', false)">Print</button></td>
             <td><button class="sequence-options" ontouchstart="addToCommand(' fade ', false)" onmousedown="addToCommand(' fade ', false)">Fade</button></td>
+            <td><button class="save" ontouchstart="addToCommand(' delete ', false)" onmousedown="addToCommand(' delete ', false)">Delete</button></td>
         </tr>
     </table>
 </div>
