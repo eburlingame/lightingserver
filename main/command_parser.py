@@ -383,13 +383,11 @@ class CommandParser:
         return func(args) # Call the function
 
     def process_patterns(self, command):
-        final = command
+        command
         for shortcut in self.shortcuts:
-            replace = shortcut.replace(final)
-            if replace != False:
-                final = replace
+            command = shortcut.replace(command)
 
-        return final
+        return command
 
 
     # ------------------ Custom Parsing Functions ----------------------

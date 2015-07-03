@@ -16,7 +16,7 @@ class CommandShortcut:
         final = re.sub(self.pattern, self.command, command)
         match = re.match(self.pattern, command)
         if not match:
-            return False
+            return final
 
         args = match.groups()
 
