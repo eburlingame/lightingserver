@@ -306,10 +306,13 @@ class CommandParser:
         )
 
     def runCommand(self, command):
-        noWhite = re.sub("\s", "", command) # remove whitespace
-        noWhite = noWhite.lower() # make lower case
+        command = re.sub("\s", "", command) # remove whitespace
+        command = command.lower() # make lower case
 
-        command = self.process_patterns(noWhite)
+        # Don't replace shortcuts if we are trying to define or delete one
+        if not re.match("(?:define)\"(.+?)\"as\"(.+?)\"", command) and not re.match("deleteshortcut\"(.+)\"", command):
+            command = self.process_patterns(command)
+
         split = self.split_by_brackets(command)
         ret = ""
         for line in split:
@@ -383,7 +386,6 @@ class CommandParser:
         return func(args) # Call the function
 
     def process_patterns(self, command):
-        command
         for shortcut in self.shortcuts:
             command = shortcut.replace(command)
 
@@ -552,9 +554,18 @@ class CommandParser:
         shortcut = args[0]
         command = args[1]
 
+        replace = False
+        for short in self.shortcuts:
+            if short.shortcut == shortcut:
+                self.shortcuts.remove(short)
+                replace = True
+
         short = CommandShortcut(shortcut, command)
         self.shortcuts.append(short)
-        return "Defined new shortcut"
+        if replace:
+            return "Replaced shortcut"
+        else:
+            return "Created new shortcut"
 
     def list_shortcuts(self, args):
         str = "Currently Save Shortcuts:\n"
