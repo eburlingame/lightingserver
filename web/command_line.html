@@ -97,12 +97,11 @@
             <td><button class="sequence-options" ontouchstart="addToCommand(' wait ', false)" onmousedown="addToCommand(' wait ', false)">Wait</button></td>
         </tr>
         <tr>
-            <td></td>
+            <td><button class="save" ontouchstart="addToCommand(' delete ', false)" onmousedown="addToCommand(' delete ', false)">Delete</button></td>
             <td colspan="2"><button class="numbers" ontouchstart="addToCommand('0', false)" onmousedown="addToCommand('0', false)">0</button></td>
             <td><button class="numbers" ontouchstart="addToCommand('.', false)" onmousedown="addToCommand('.', false)">.</button></td>
             <td><button class="printing" ontouchstart="addToCommand(' print ', false)" onmousedown="addToCommand(' print ', false)">Print</button></td>
             <td><button class="sequence-options" ontouchstart="addToCommand(' fade ', false)" onmousedown="addToCommand(' fade ', false)">Fade</button></td>
-            <td><button class="save" ontouchstart="addToCommand(' delete ', false)" onmousedown="addToCommand(' delete ', false)">Delete</button></td>
         </tr>
     </table>
 </div>
