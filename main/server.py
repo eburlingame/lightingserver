@@ -33,8 +33,6 @@ class WSServer:
         thread.daemon = True                            # Daemonize thread
         thread.start()
 
-
-
     def run(self):
         cherrypy.config.update({'server.socket_port': self.port})
         WebSocketPlugin(cherrypy.engine).subscribe()
