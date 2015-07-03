@@ -316,7 +316,8 @@ class CommandParser:
         split = self.split_by_brackets(command)
         ret = ""
         for line in split:
-           ret += "\n" + self.parseCommand(line)
+            ret += "\n" + line
+            ret += "\n" + self.parseCommand(line)
         return ret
 
     def split_by_brackets(self, command):
