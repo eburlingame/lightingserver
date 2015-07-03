@@ -377,8 +377,8 @@ class Controller:
                     return runner
             return False
 
-    def load_sequence(self, name, percent = 100, fade = -1, wait = -1, step = 0, cued = False, channelSet = None):
-        return self.load_sequence_list((name, percent, fade, wait, step, cued, channelSet))
+    def load_sequence(self, name, percent = 100, fade = -1, wait = -1, step = 0, cued = False, norepeat=False, channelSet = None):
+        return self.load_sequence_list((name, percent, fade, wait, step, cued, norepeat, channelSet))
     def load_sequence_list(self, args):
         name        = required_arg(args, 0, "A name must be supplied") # Name of the sequence
         percent     = optional_arg(args, 1, 100)
@@ -386,7 +386,9 @@ class Controller:
         wait        = optional_arg(args, 3, -1)
         step        = optional_arg(args, 4, 0)
         cued        = optional_arg(args, 5, False)
-        channelSet  = optional_arg(args, 6, None)
+        norepeat    = optional_arg(args, 6, False)
+        channelSet  = optional_arg(args, 7, None)
+
         sequence = self.get_sequence(name)
         if sequence == False:
             return "Sequence not found"
@@ -398,20 +400,20 @@ class Controller:
 
         # controller, id, sequence, channelSet = None, percent = 100,
         # cued = False, fade = -1, wait = -1, step = 0, repeat = True
-        runner = SequenceRunner(self, running_id, sequence, channelSet, percent, cued, fade, wait, step)
+        runner = SequenceRunner(self, running_id, sequence, channelSet, percent, cued, fade, wait, step, norepeat)
         self.sequenceRunners.append(runner)
         return "Loaded sequence %s (running id: %s) " % (name, running_id)
 
     def save_sequence(self, name, insert = False, step = -1, fade = -1, wait = -1,
-                      repeat = False, all = False, cued = False, channelSet = None, channelState = None):
-        return self.save_sequence_list((name, insert, step, fade, wait, repeat, all, cued, channelSet, channelState))
+                      norepeat = False, all = False, cued = False, channelSet = None, channelState = None):
+        return self.save_sequence_list((name, insert, step, fade, wait, norepeat, all, cued, channelSet, channelState))
     def save_sequence_list(self, args):
         name         = required_arg(args, 0, "A name must be supplied") # Name of the sequence
         insert       = optional_arg(args, 1, False) # Whether the step will be inserted
         step         = optional_arg(args, 2, -1)    # The step where to insert/overwrite the scene
         fade         = optional_arg(args, 3, -1)    # The fade time of the step
         wait         = optional_arg(args, 4, -1)    # The wait time of the step
-        repeat       = optional_arg(args, 5, True)  # Whether all channels should be included
+        norepeat     = optional_arg(args, 5, False)  # Whether the sequence should repeat
         all          = optional_arg(args, 6, False) # Whether all channels should be included
         cued         = optional_arg(args, 7, False) # Whether the step will be manually cued
         channelSet   = optional_arg(args, 8, None)  # The set of channels to record into the step
@@ -420,7 +422,7 @@ class Controller:
         # Find the sequence, or make a new one
         sequence = self.get_sequence(name)
         if sequence == False:
-            sequence = Sequence(name, repeat)
+            sequence = Sequence(name)
             self.sequences.append(sequence)
             sequence = self.sequences[len(self.sequences) - 1]
 
@@ -447,7 +449,7 @@ class Controller:
             wait = -1
 
         # Make and add the new step
-        newStep = SequenceStep(stepNum, name, channelStateToSet, fade, wait)
+        newStep = SequenceStep(stepNum, name, channelStateToSet, fade, wait, norepeat)
 
         numChannels = channelStateToSet.get_num_channels()
         if insert:

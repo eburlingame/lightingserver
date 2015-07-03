@@ -5,7 +5,7 @@ __author__ = 'Eric Burlingame'
 class SequenceRunner:
 
     def __init__(self, controller, id, sequence, channelSet = None, percent = 100,
-                 cued = False, fade = -1, wait = -1, step = 0, repeat = True):
+                 cued = False, fade = -1, wait = -1, step = 0, norepeat = False):
         self.controller = controller
         self.patch = controller.patch
 
@@ -16,8 +16,12 @@ class SequenceRunner:
         self.cued = cued
         self.fade = fade
         self.wait = wait
-        self.repeat = repeat
+        self.norepeat = norepeat
         self.done = False
+
+        if not self.norepeat:
+            if self.sequence.get_norepeat():
+                self.norepeat = True
 
         self.currentStep = step
         self.paused = False
@@ -25,7 +29,6 @@ class SequenceRunner:
         self.elapsedTotal = self.get_fade() + self.get_wait()
 
         self.advance()
-
 
     # Takes the difference in time since last update in seconds
     def update(self, diff):
@@ -45,10 +48,10 @@ class SequenceRunner:
         self.currentStep += 1
         self.elapsed = 0
         if self.currentStep >= len(self.sequence.steps):
-            if self.repeat:
-                self.currentStep = 0
-            else:
+            if self.norepeat:
                 self.done = True
+            else:
+                self.currentStep = 0
 
     def pause(self):
         self.paused = True
@@ -92,7 +95,7 @@ class SequenceRunner:
             return default
 
     def to_string(self):
-        str = "Sequence %s (Running id %s) " % (self.sequence.name, self.id)
+        str = "Sequence %s (Running id %s) Step %s, " % (self.sequence.name, self.id, self.currentStep)
         if self.percent != 100:
             str += "Percent: %s %\t\t" % self.percent
         if self.cued != False:
@@ -101,7 +104,7 @@ class SequenceRunner:
             str += "Fade: %s\t\t" % self.fade
         if self.wait != None:
             str += "Wait: %s\t\t" % self.wait
-        if self.repeat != True:
+        if self.norepeat != True:
             str += "Not repeating\t\t"
         if self.channelSet != None:
             str += "Channels: %s\t\t" % self.channelSet.to_string()
@@ -109,9 +112,8 @@ class SequenceRunner:
 
 class Sequence:
 
-    def __init__(self, name, repeat):
+    def __init__(self, name):
         self.name = name
-        self.repeat = repeat
         self.steps = []
 
     def append_step(self, sequenceStep):
@@ -146,6 +148,12 @@ class Sequence:
     def get_step(self, number):
         return self.steps[number]
 
+    def get_norepeat(self):
+        for step in self.steps:
+            if step.norepeat:
+                return True
+        return False
+
     def to_string_short(self):
         return "Sequence %s with %s steps" % (self.name, len(self.steps))
 
@@ -162,14 +170,14 @@ class Sequence:
             str += step.to_command(self) + "\n"
         return str
 
-
 class SequenceStep:
-    def __init__(self, number, label, channelState, fade = -1, wait = -1):
+    def __init__(self, number, label, channelState, fade = -1, wait = -1, norepeat = False):
         self.channelState = channelState
         self.fade = fade
         self.wait = wait
         self.number = number
         self.label = label
+        self.norepeat = norepeat
 
     # def to_string(self):
     #     str = "Step #" + self.number + ": \n"

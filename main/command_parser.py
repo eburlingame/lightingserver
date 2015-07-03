@@ -190,34 +190,34 @@ class CommandParser:
         # Sequences
         {
             # load sequence [sequence name] ~fade [~fade time] ~wait [~wait time] ~step ~[step number] ~(cued)
-            "pattern": "loadsequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?channel(.+?)$",
+            "pattern": "loadsequence(.+?)((?:insert|step|fade|wait|all|cued|norepeat)(?:.+?)?)?channel(.+?)$",
             "function": self.parse_load_sequence_channel_set,
             "params" : [ "string", "string", "channel_range" ]
         },
         {
             # load sequence [sequence name] ~fade [~fade time] ~wait [~wait time] ~step ~[step number] ~(cued)
-            "pattern": "loadsequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?$",
+            "pattern": "loadsequence(.+?)((?:insert|step|fade|wait|all|cued|norepeat)(?:.+?)?)?$",
             "function": self.parse_load_sequence,
             "params" : [ "string", "string" ]
         },
         {
             # save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time]
             # ~wait [~wait time] ~all ~cued { [channel commands] }
-            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?{(.+?)}$",
+            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued|norepeat)(?:.+?)?)?{(.+?)}$",
             "function": self.parse_save_sequence_channel_state,
             "params" : [ "string", "string", "channel_state" ]
         },
         {
             # save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time]
             # ~wait [~wait time] ~all ~cued ~channel ~[channel selection]
-            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?channel(.+?)$",
+            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued|norepeat)(?:.+?)?)?channel(.+?)$",
             "function": self.parse_save_sequence_channel_set,
             "params" : [ "string", "string", "channel_range" ]
         },
         {
             # save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time]
             # ~wait [~wait time] ~all ~cued
-            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued)(?:.+?)?)?$",
+            "pattern": "savesequence(.+?)((?:insert|step|fade|wait|all|cued|norepeat)(?:.+?)?)?$",
             "function": self.parse_save_sequence,
             "params" : [ "string", "string" ]
         },
@@ -396,7 +396,8 @@ class CommandParser:
                                              opt["fade"],
                                              opt["wait"],
                                              opt["step"],
-                                             opt["cued"])
+                                             opt["cued"],
+                                             opt["norepeat"])
 
 
     # Takes (name, optionsStr, channelState) as args
@@ -419,7 +420,7 @@ class CommandParser:
                                              opt["step"],
                                              opt["fade"],
                                              opt["wait"],
-                                             opt["repeat"],
+                                             opt["norepeat"],
                                              opt["all"],
                                              opt["cued"],
                                              None, channelState)
@@ -437,7 +438,6 @@ class CommandParser:
 
         opt = self.parse_save_options_string(optionsStr)
 
-
         # (self, name, insert = False, step = -1, fade = -1, wait = -1,
         #        repeat = False, all = False, cued = False, channelSet = None)
         return self.controller.save_sequence(name,
@@ -445,7 +445,7 @@ class CommandParser:
                                              opt["step"],
                                              opt["fade"],
                                              opt["wait"],
-                                             opt["repeat"],
+                                             opt["norepeat"],
                                              opt["all"],
                                              opt["cued"],
                                              channelSet)
@@ -459,7 +459,6 @@ class CommandParser:
 
         opt = self.parse_save_options_string(optionsStr)
 
-
         # (self, name, insert = False, step = -1, fade = -1, wait = -1,
         #        repeat = False, all = False, cued = False, channelSet = None)
         return self.controller.save_sequence(name,
@@ -467,7 +466,7 @@ class CommandParser:
                                              opt["step"],
                                              opt["fade"],
                                              opt["wait"],
-                                             opt["repeat"],
+                                             opt["norepeat"],
                                              opt["all"],
                                              opt["cued"])
 
@@ -485,7 +484,7 @@ class CommandParser:
         "step"   : self.match_first("step(\d+)", optionsStr, -1),
         "fade"   : self.match_first("fade([\d|\.]+)", optionsStr, -1, float),
         "wait"   : self.match_first("wait([\d|\.]+)", optionsStr, -1, float),
-        "repeat" : self.match_first("repeat", optionsStr, True),
+        "norepeat": self.match_first("norepeat", optionsStr, False),
         "all"    : self.match_first("all", optionsStr, False),
         "cued"   : self.match_first("cued", optionsStr, False)
         }
@@ -498,13 +497,13 @@ class CommandParser:
         # cued = False
         # percent = 100
         return {
-        "fade"    : self.match_first("fade([\d|\.]+)", optionsStr, -1, float),
-        "wait"    : self.match_first("wait([\d|\.]+)", optionsStr, -1, float),
-        "step"    : self.match_first("step(\d+)", optionsStr, 0),
-        "repeat"  : self.match_first("repeat", optionsStr, True),
-        "all"     : self.match_first("all", optionsStr, False),
-        "cued"    : self.match_first("cued", optionsStr, False),
-        "percent" : self.match_first("%(\d+)", optionsStr, 100)
+        "fade"     : self.match_first("fade([\d|\.]+)", optionsStr, -1, float),
+        "wait"     : self.match_first("wait([\d|\.]+)", optionsStr, -1, float),
+        "step"     : self.match_first("step(\d+)", optionsStr, 0),
+        "norepeat" : self.match_first("norepeat", optionsStr, False),
+        "all"      : self.match_first("all", optionsStr, False),
+        "cued"     : self.match_first("cued", optionsStr, False),
+        "percent"  : self.match_first("%(\d+)", optionsStr, 100)
         }
 
     def match_first(self, pattern, string, default, typeFunc = int):
