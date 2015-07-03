@@ -412,6 +412,7 @@ class CommandParser:
                                              opt["wait"],
                                              opt["step"],
                                              opt["cued"],
+                                             opt["norepeat"],
                                              channelSet)
     # Takes a (name, optionsStr) as args
     def parse_load_sequence(self, args):
@@ -431,7 +432,6 @@ class CommandParser:
                                              opt["step"],
                                              opt["cued"],
                                              opt["norepeat"])
-
 
     # Takes (name, optionsStr, channelState) as args
     def parse_save_sequence_channel_state(self, args):
