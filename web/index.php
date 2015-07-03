@@ -246,7 +246,7 @@
             element.scrollTop = element.scrollHeight;
         }
 
-        var name = "<?php $host= gethostname(); print gethostbyname($host); ?>";
+        var name = "<?php print $_SERVER['SERVER_ADDR']; ?>";
         var socket = null;
         function promtConnection()
         {
