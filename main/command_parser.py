@@ -187,7 +187,7 @@ class CommandParser:
         },
         {
             # list scenes
-            "pattern": "listscenes",
+            "pattern": "listscenes?",
             "function": self.controller.list_scenes_list,
             "params" : [  ]
         },
@@ -283,13 +283,13 @@ class CommandParser:
         },
         {
             # list sequences
-            "pattern": "listsequences",
+            "pattern": "listsequences?",
             "function": self.controller.list_sequences_list,
             "params" : [  ]
         },
         {
             # list running
-            "pattern": "listrunning",
+            "pattern": "listrunnings?",
             "function": self.controller.list_running_list,
             "params" : [  ]
         },
@@ -306,8 +306,10 @@ class CommandParser:
         )
 
     def runCommand(self, command):
-        command = self.process_patterns(command)
-        print command
+        noWhite = re.sub("\s", "", command) # remove whitespace
+        noWhite = noWhite.lower() # make lower case
+
+        command = self.process_patterns(noWhite)
         split = self.split_by_brackets(command)
         ret = ""
         for line in split:
