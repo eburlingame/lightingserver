@@ -104,7 +104,7 @@ class SequenceRunner:
             str += "Fade: %s\t\t" % self.fade
         if self.wait != None:
             str += "Wait: %s\t\t" % self.wait
-        if self.norepeat != True:
+        if self.norepeat:
             str += "Not repeating\t\t"
         if self.channelSet != None:
             str += "Channels: %s\t\t" % self.channelSet.to_string()
