@@ -32,6 +32,18 @@ class CommandParser:
             "function": self.define_shortcut,
             "params" : [ "string", "string" ]
         },
+        {
+            # list shortcuts
+            "pattern": "listshortcuts?",
+            "function": self.list_shortcuts,
+            "params" : [  ]
+        },
+        {
+            # delete shortcut "[shortcut name]"
+            "pattern": "deleteshortcut\"(.+)\"",
+            "function": self.delete_shortcut,
+            "params" : [ "string" ]
+        },
 
 
         # Scheduling
@@ -294,19 +306,39 @@ class CommandParser:
         )
 
     def runCommand(self, command):
-        split = re.split(";", command)
+        command = self.process_patterns(command)
+        print command
+        split = self.split_by_brackets(command)
         ret = ""
         for line in split:
            ret += "\n" + self.parseCommand(line)
         return ret
+
+    def split_by_brackets(self, command):
+        open = False
+        middles = []
+        last = ""
+        for i in range(0, len(command)):
+            if command[i] == "\"" or command[i] == "{" or command[i] == "}":
+                open = False if open else True
+
+            if command[i] == ";":
+                if not open:
+                    middles.append(last)
+                    last = ""
+                else:
+                    last = last + command[i]
+            else:
+                last = last + command[i]
+
+        middles.append(last)
+        return middles
 
     # ------------------ Parsing and Calling Commands ----------------------
     def parseCommand(self, command):
 
         noWhite = re.sub("\s", "", command) # remove whitespace
         noWhite = noWhite.lower() # make lower case
-
-        noWhite = self.process_patterns(noWhite)
 
         for p in self.patterns:
 
@@ -351,10 +383,9 @@ class CommandParser:
     def process_patterns(self, command):
         final = command
         for shortcut in self.shortcuts:
-            replace = shortcut.replace(command)
+            replace = shortcut.replace(final)
             if replace != False:
                 final = replace
-                # print "MATCHED: %s" % final
 
         return final
 
@@ -470,7 +501,6 @@ class CommandParser:
                                              opt["all"],
                                              opt["cued"])
 
-
     def parse_save_options_string(self, optionsStr):
         # insert = False
         # step = -1
@@ -525,3 +555,20 @@ class CommandParser:
         short = CommandShortcut(shortcut, command)
         self.shortcuts.append(short)
         return "Defined new shortcut"
+
+    def list_shortcuts(self, args):
+        str = "Currently Save Shortcuts:\n"
+        for shortcut in self.shortcuts:
+            str += "\t" + shortcut.to_string()
+        return str
+
+    def delete_shortcut(self, args):
+        if len(args) < 1:
+            return "Not enough arguments"
+
+        cmd = args[0]
+        for shortcut in self.shortcuts:
+            if shortcut.shortcut == cmd:
+                self.shortcuts.remove(shortcut)
+
+        return "Removed shortcut '%s'" % cmd

@@ -8,12 +8,12 @@ class CommandShortcut:
         self.command = command
 
         escaped = re.escape(self.shortcut)
-        self.pattern = "^" + re.sub("\\\#", "(.+?)", escaped) + "$"
+        self.pattern = re.sub("\\\#", "(.+?)", escaped)
         self.args_count = self.shortcut.count('#')
-        print "Pattern %s" % self.pattern
+        # print "Pattern %s" % self.pattern
 
     def replace(self, command):
-        final = self.command
+        final = re.sub(self.pattern, self.command, command)
         match = re.match(self.pattern, command)
         if not match:
             return False
@@ -30,3 +30,6 @@ class CommandShortcut:
 
     def to_command(self):
         return 'define "%s" as "%s"\n' % (self.shortcut, self.command)
+
+    def to_string(self):
+        return 'Shortcut: "%s" with command "%s"\n' % (self.shortcut, self.command)

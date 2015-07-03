@@ -354,9 +354,6 @@ class Controller:
         return channelState.to_string()
 
 
-
-
-
     # ------------------ Sequences ----------------------
 
     def get_sequence(self, name):
@@ -470,7 +467,6 @@ class Controller:
         all     = optional_arg(args, 0, False)
         name    = optional_arg(args, 1, None)
         id      = optional_arg(args, 2, None)
-        print "ALL: %s" % all
         if all != False:
             self.sequenceRunners = []
             return "All sequences removed from running queue"
