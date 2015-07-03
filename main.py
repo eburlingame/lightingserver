@@ -87,7 +87,7 @@ class Main:
                 else:
                     return e.message
 
-    def read_file(self, filepath):
+    def read_file(self, filepath): 
         try:
             file = open(filepath, 'r')
         except:
