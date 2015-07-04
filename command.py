@@ -12,18 +12,21 @@ for arg in sys.argv:
         command += arg
     i += 1
 
-# ws = create_connection("ws://192.168.0.22:8080/ws")
-#
-# print "Calling '%s'" % command
-# ws.send(command)
-#
-# result =  ws.recv()
-# print "Response: '%s'" % result
-#
-# ws.close()
+ws = create_connection("ws://localhost:8080/ws")
 
-import zerorpc
+print "Calling '%s'" % command
+ws.send(command)
 
-c = zerorpc.Client()
-c.connect("tcp://127.0.0.1:1111")
-print c.run_command(command)
+result =  ws.recv()
+print "Response: '%s'" % result
+
+ws.close()
+
+
+# RPC Method
+
+# import zerorpc
+#
+# c = zerorpc.Client()
+# c.connect("tcp://127.0.0.1:1111")
+# print c.run_command(command)

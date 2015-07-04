@@ -7,7 +7,7 @@ from output.dummy_output import DummyOutput
 from main.command_parser import CommandParser
 from main.controller import Controller
 from main.server import WSServer
-from main.rpc_server import *
+# from main.rpc_server import *
 
 class colors:
     HEADER = '\033[95m'
@@ -26,11 +26,10 @@ class Main:
         self.controller = Controller(self)
         self.command = CommandParser(self.controller)
         self.dmxOut = DmxOutput(self.controller)
-        self.rpc = RPCServer(self)
+        # self.rpc = RPCServer(self)
 
-        self.wd = os.path.dirname(os.path.realpath(__file__))
-        self.startPath = self.wd + "/start.txt"
-        self.dataPath = self.wd + "/data.txt"
+        self.startPath = self.get_abs_path("start.txt")
+        self.dataPath = self.get_abs_path("data.txt")
 
         self.read_file(self.startPath)
 
@@ -87,6 +86,9 @@ class Main:
                     return colors.WARNING + e.message + colors.ENDC
                 else:
                     return e.message
+
+    def get_abs_path(self, filepath):
+        return os.path.abspath("../" + filepath)
 
     def read_file(self, filepath):
         try:

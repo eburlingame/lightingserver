@@ -28,7 +28,6 @@ class WSServer:
         self.CommandWebSocket = CommandWebSocket
         self.CommandWebSocket.main = self.main
 
-
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True                            # Daemonize thread
         thread.start()
@@ -37,6 +36,7 @@ class WSServer:
         cherrypy.config.update({'server.socket_port': self.port})
         WebSocketPlugin(cherrypy.engine).subscribe()
         cherrypy.tools.websocket = WebSocketTool()
+
 
         class Root(object):
             @cherrypy.expose
@@ -52,11 +52,13 @@ class WSServer:
                 # you can access the class instance through
                 handler = cherrypy.request.ws_handler
 
-
-
-        web_path = os.path.dirname(__file__) #<-- absolute dir the script is in
-        web_path = os.path.join(web_path, "../web/")
-        cherrypy.quickstart(Root(), '/', config={'/ws': {'tools.websocket.on': True,
-                                                         'tools.websocket.handler_cls': self.CommandWebSocket,
-                                                         'tools.staticdir.on': True,
-                                                         'tools.staticdir.dir' : web_path}})
+        cherrypy.quickstart(Root(), '/', config={'/ws':
+                                                     {
+                                                         'tools.websocket.on': True,
+                                                         'tools.websocket.handler_cls': self.CommandWebSocket
+                                                     },
+                                                 'global': {
+                                                   'log.screen': False,
+                                                   'log.error_file': '',
+                                                   'log.access_file': ''
+                                                }})

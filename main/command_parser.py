@@ -301,6 +301,12 @@ class CommandParser:
             "function": self.controller.print_channels_list,
             "params" : [  ]
         },
+        {
+            # read-csv [file name]
+            "pattern": "print(?:channels)?",
+            "function": self.controller.print_channels_list,
+            "params" : [  ]
+        },
 
 
         )

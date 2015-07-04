@@ -5,6 +5,7 @@ from group import *
 from scene import *
 from sequence import *
 from schedule import *
+from csv_file import *
 
 # Helper functions:
 
@@ -238,8 +239,6 @@ class Controller:
         return "Scene %s deleted" % name
 
 
-
-
     # ------------------ Groups ----------------------
     def get_group(self, name):
         for group in self.groups:
@@ -289,8 +288,6 @@ class Controller:
             return "Group not found"
 
         return "\t" + group.to_string()
-
-
 
 
     # ------------------ Channel Control ----------------------
@@ -662,7 +659,6 @@ class Controller:
                 self.main.run_command(schedule.command)
                 print "Running scheduled command '%s'" % schedule.command
 
-
     def to_commands(self, shortcuts):
         str = "#PATCH:"
         str += self.patch.to_commands()
@@ -689,6 +685,21 @@ class Controller:
             str += shortcut.to_command()
 
         return str
+
+    def read_csv(self, filepath):
+        return self.read_csv_list([filepath])
+    def read_csv_list(self, args):
+        filepath = required_arg(args, 0, "A filepath must be supplied")
+        absPath = self.main.get_abs_path(filepath)
+        try:
+            csv = CSVFile(absPath, self)
+        except Exception, e:
+            return e.message
+
+        self.sequences.append(csv.sequence)
+        return "Added sequence %s with %s steps" % (csv.sequence.name, len(csv.sequence.steps))
+
+
 
     def __init__(self, main):
         self.patch = Patch()
