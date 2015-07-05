@@ -197,14 +197,29 @@ class SequenceStep:
         return newState
 
     def get_custom_channel_state(self, controller, percent, channelSet):
-        set = channelSet.set
+        toSet = sorted(channelSet.set)
         values = self.channelState.get_sorted_pairs()
+
+        firstChannelScene = values[0]["number"]
+        lastChannelScene = values[len(values) - 1]["number"]
+
+        firstChannelSet = toSet[0]
+        lastChannelSet = toSet[len(toSet) - 1]
+        base = firstChannelSet
+
         newState = ChannelState(controller)
         ratio = (percent / 100.0)
         i = 0
-        for channel in set:
-            newState.channel_at(channel, values[i]["value"] * ratio)
-            i = (i + 1) % len(values)
+        for chn in range(firstChannelSet, lastChannelSet + 1):
+            relChannelSet = chn - base
+            relChannelScene = values[i]['number'] - firstChannelScene
+            # print "%s\t%s\t%s" % (relChannelSet, relChannelScene, i)
+            if relChannelSet == relChannelScene:
+                newState.channel_at(chn, values[i]["value"] * ratio)
+                i += 1
+                if i >= len(values):
+                    i = 0
+                    base = chn + 1
 
         return newState
 
