@@ -317,7 +317,6 @@ class CommandParser:
         # Don't replace shortcuts if we are trying to define or delete one
         command = command.strip()
         if not re.match("(?:define)", command) and not re.match("deleteshortcut", command):
-            print "processing patterns"
             command = self.process_patterns(command)
 
         command = re.sub("\s", "", command) # remove whitespace
