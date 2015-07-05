@@ -88,7 +88,8 @@ class Main:
                     return e.message
 
     def get_abs_path(self, filepath):
-        return os.path.abspath("../" + filepath)
+        wd = os.path.dirname(os.path.realpath(__file__))
+        return os.path.join(wd, filepath)
 
     def read_file(self, filepath):
         try:
