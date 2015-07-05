@@ -315,14 +315,16 @@ class CommandParser:
         command = command.lower() # make lower case
 
         # Don't replace shortcuts if we are trying to define or delete one
-        if not re.match("(?:define)\"(.+?)\"as\"(.+?)\"", command) and not re.match("deleteshortcut\"(.+)\"", command):
+        command = command.strip()
+        if not re.match("(?:define)", command) and not re.match("deleteshortcut", command):
+            print "processing patterns"
             command = self.process_patterns(command)
 
         command = re.sub("\s", "", command) # remove whitespace
         split = self.split_by_brackets(command)
         ret = ""
         for line in split:
-            ret += "\n" + line
+            # ret += "\n" + line
             ret += "\n" + self.parseCommand(line)
         return ret
 
