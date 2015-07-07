@@ -302,30 +302,14 @@ class CommandParser:
             "params" : [  ]
         },
         {
-            # read-csv [file name]
-            "pattern": "print(?:channels)?",
-            "function": self.controller.print_channels_list,
-            "params" : [  ]
+            # load-csv [file name]
+            "pattern": "load-csv(.+)",
+            "function": self.controller.read_csv_list,
+            "params" : [ "string" ]
         },
 
 
         )
-
-    def runCommand(self, command):
-        command = command.lower() # make lower case
-
-        # Don't replace shortcuts if we are trying to define or delete one
-        command = command.strip()
-        if not re.match("(?:define)", command) and not re.match("deleteshortcut", command):
-            command = self.process_patterns(command)
-
-        command = re.sub("\s", "", command) # remove whitespace
-        split = self.split_by_brackets(command)
-        ret = ""
-        for line in split:
-            # ret += "\n" + line
-            ret += "\n" + self.parseCommand(line)
-        return ret
 
     def split_by_brackets(self, command):
         open = False
@@ -348,6 +332,22 @@ class CommandParser:
         return middles
 
     # ------------------ Parsing and Calling Commands ----------------------
+    def runCommand(self, command):
+        command = command.lower() # make lower case
+
+        # Don't replace shortcuts if we are trying to define or delete one
+        command = command.strip()
+        if not re.match("(?:define)", command) and not re.match("deleteshortcut", command):
+            command = self.process_patterns(command)
+
+        command = re.sub("\s", "", command) # remove whitespace
+        split = self.split_by_brackets(command)
+        ret = ""
+        for line in split:
+            # ret += "\n" + line
+            ret += "\n" + self.parseCommand(line)
+        return ret
+
     def parseCommand(self, command):
 
         noWhite = re.sub("\s", "", command) # remove whitespace
@@ -396,7 +396,6 @@ class CommandParser:
     def process_patterns(self, command):
         for shortcut in self.shortcuts:
             command = shortcut.replace(command)
-
         return command
 
 

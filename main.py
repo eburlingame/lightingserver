@@ -75,8 +75,6 @@ class Main:
         elif re.match("close", noWhite):
             return self.close_interface()
 
-
-
         else:
             return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
             try:

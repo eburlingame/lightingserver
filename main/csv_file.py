@@ -16,7 +16,7 @@ class CSVFile:
             raise Exception("File could not be opened")
 
         self.file = file
-        self.name = os.path.splitext(filepath)[0]
+        self.name = os.path.splitext(os.path.basename(filepath))[0]
 
         self.sequence = Sequence(self.name)
         self.parse()
@@ -29,6 +29,7 @@ class CSVFile:
             if len(cols) < 5:
                 raise Exception("File format invalid")
 
+
             number = int(cols[0])
             label = cols[1]
             fade = float(cols[2])
@@ -37,8 +38,12 @@ class CSVFile:
             channel = 0
             stepState = ChannelState(self.controller)
             for i in range(5, len(cols)):
-                value = int(cols[i])
+                try:
+                    value = int(cols[i])
+                except:
+                    value = 0
                 stepState.channel_at(channel, value)
+                channel += 1
 
             step = SequenceStep(number, label, stepState, fade, wait)
             self.sequence.append_step(step)
