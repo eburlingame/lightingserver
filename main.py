@@ -76,7 +76,7 @@ class Main:
             return self.close_interface()
 
         else:
-            return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
+            # return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
             try:
                 if print_colors:
                     return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
