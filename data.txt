@@ -23,7 +23,8 @@ patch channel 208 dmx 21 fixture led2
 patch channel 209 dmx 22 fixture led2 
 patch channel 210 dmx 23 fixture led2 
 patch channel 211 dmx 24 fixture led2 
-patch channel 212 dmx 26 fixture led2 
+patch channel 212 dmx 25 fixture led2 
+patch channel 213 dmx 26 fixture led2 
 patch channel 301 dmx 27 fixture led3 
 patch channel 302 dmx 28 fixture led3 
 patch channel 303 dmx 29 fixture led3 
@@ -35,25 +36,55 @@ patch channel 308 dmx 34 fixture led3
 patch channel 309 dmx 35 fixture led3 
 patch channel 310 dmx 36 fixture led3 
 patch channel 311 dmx 37 fixture led3 
-patch channel 313 dmx 38 fixture led3 
-patch channel 312 dmx 39 fixture led3 
+patch channel 312 dmx 38 fixture led3 
+patch channel 313 dmx 39 fixture led3 
 patch channel 401 dmx 40 fixture par_blue 
 patch channel 402 dmx 41 fixture par_red 
 patch channel 403 dmx 42 fixture par_cyan 
 patch channel 404 dmx 43 fixture par_lav 
 
 #GROUPS:
-save group leds channel 1 thru 10 
-save group led1 channel 1 thru 5 
-save group led2 channel 6 thru 10 
+save group led1 channel 102 thru 113 
+save group led3 channel 302 thru 313 
+save group led2 channel 202 thru 213 
+save group led1_red channel 102 and 105 and 108 and 111 
+save group led1_blue channel 104 and 107 and 110 and 113 
+save group led1_green channel 103 and 106 and 109 and 112 
+save group led2_red channel 202 and 205 and 208 and 211 
+save group led2_green channel 203 and 206 and 209 and 212 
+save group led2_blue channel 204 and 207 and 210 and 213 
+save group led3_red channel 302 and 305 and 308 and 311 
+save group led3_blue channel 304 and 307 and 310 and 313 
+save group led3_green channel 303 and 306 and 309 and 312 
+save group all channel 102 thru 113 and 202 thru 213 and 302 thru 313 
 
 #SCENES:
-save scene test  { 1 thru 4 at 100 } 
-save scene par  { 9 thru 12 at 100 } 
-save scene bo  { 1 thru 20 at 0 } 
+save scene red  { 102 and 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 100 } 
+save scene green  { 103 and 106 and 109 and 112 and 203 and 206 and 209 and 212 and 303 and 306 and 309 and 312 at 100 } 
+save scene blue  { 104 and 107 and 110 and 113 and 204 and 207 and 210 and 304 and 307 and 310 and 313 at 100 } 
+save scene unloadall  { 101 and 201 and 301 at 100 } 
+save scene blackout  { 102 thru 113 and 202 thru 213 and 302 thru 313 at 0 } 
 
 #SEQUENCES:
-save sequence raise { 301 thru 304 at 100 } 
+save sequence raise fade 0.25 wait 0.0 { 305 thru 313 at 0, 301 thru 304 at 100 } 
+save sequence raise fade 0.25 wait 0.0 { 308 thru 313 at 0, 301 thru 307 at 100 } 
+save sequence raise fade 0.25 wait 0.0 { 311 thru 313 at 0, 301 thru 310 at 100 } 
+save sequence raise fade 0.25 wait 0.0 { 301 thru 313 at 100 } 
+save sequence rgb { 103 and 104 and 106 and 107 and 109 and 110 and 112 and 113 and 203 and 204 and 206 and 207 and 209 and 210 and 212 and 213 and 303 and 304 and 306 and 307 and 309 and 310 and 312 and 313 at 0, 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 100 } 
+save sequence rgb { 102 and 104 and 105 and 107 and 108 and 110 and 111 and 113 and 202 and 204 and 205 and 207 and 208 and 210 and 211 and 213 and 302 and 304 and 305 and 307 and 308 and 310 and 311 and 313 at 0, 103 and 106 and 109 and 112 and 203 and 206 and 209 and 212 and 303 and 306 and 309 and 312 at 100 } 
+save sequence rgb { 102 and 103 and 105 and 106 and 108 and 109 and 111 and 112 and 202 and 203 and 205 and 206 and 208 and 209 and 211 thru 213 and 302 and 303 and 305 and 306 and 308 and 309 and 311 and 312 at 0, 104 and 107 and 110 and 113 and 204 and 207 and 210 and 304 and 307 and 310 and 313 at 100 } 
+save sequence rgbsave { 103 and 104 and 106 and 107 and 109 and 110 and 112 and 113 and 203 and 204 and 206 and 207 and 209 and 210 and 212 and 213 and 303 and 304 and 306 and 307 and 309 and 310 and 312 and 313 at 0, 102 and 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 100 } 
+save sequence rgbsave { 102 and 104 and 105 and 107 and 108 and 110 and 111 and 113 and 202 and 204 and 205 and 207 and 208 and 210 and 211 and 213 and 302 and 304 and 305 and 307 and 308 and 310 and 311 and 313 at 0, 103 and 106 and 109 and 112 and 203 and 206 and 209 and 212 and 303 and 306 and 309 and 312 at 100 } 
+save sequence sun fade 60.0 { 103 and 104 and 106 and 107 and 109 and 110 and 112 and 113 and 203 and 204 and 206 and 207 and 209 and 210 and 212 and 213 and 303 and 304 and 306 and 307 and 309 and 310 and 312 and 313 at 0, 102 and 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 10 } 
+save sequence sun fade 400.0 { 104 and 107 and 110 and 113 and 204 and 207 and 210 and 213 and 304 and 307 and 310 and 313 at 0, 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 50, 103 and 106 and 109 and 112 and 203 and 206 and 209 and 212 and 303 and 306 and 309 and 312 at 10 } 
+save sequence sun fade 120.0 { 104 and 107 and 110 and 113 and 204 and 207 and 210 and 213 and 304 and 307 and 310 and 313 at 0, 106 and 109 and 112 and 203 and 206 and 209 and 212 and 303 and 306 and 309 and 312 at 25, 102 and 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 75 } 
+save sequence sun fade 60.0 { 104 and 107 and 110 and 113 and 204 and 207 and 210 and 213 and 304 and 307 and 310 and 313 at 0, 106 and 109 and 112 and 203 and 206 and 209 and 212 and 303 and 306 and 309 and 312 at 35, 102 and 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 100 } 
+save sequence sun fade 60.0 { 103 and 106 and 109 and 112 and 203 and 206 and 209 and 212 and 303 and 306 and 309 and 312 at 35, 102 and 105 and 108 and 111 and 202 and 205 and 208 and 211 and 302 and 305 and 308 and 311 at 100, 104 and 107 and 110 and 113 and 204 and 207 and 210 and 213 and 304 and 307 and 310 and 313 at 15 } 
 
 #SHORTCUTS:
-define "bo" as "loadscenebo"
+define "ls" as "listrunning"
+define "rise" as "loadsequenceraisefade0.25norepeatchannel101/113+201/213+301/313"
+define "leds_up" as "101+201+301*100"
+define "bo" as "loadsceneblackout;unloadall"
+define "default_fd" as "1"
+define "default_wt" as "0"
