@@ -3,9 +3,3 @@ open
 
 start server
 
-define "ls" as "list running"
-
-save sequence test fade 1 wait 0{ 1 * 100 }
-save sequence test fade 1 wait 0 { 1 * 0 }
-
-load sequence test norepeat
