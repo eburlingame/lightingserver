@@ -1,27 +1,6 @@
-# Simple DMX Lighting Server
 
-## Overview
+# DMX Lighting Server
 
-This is a simple lighting control program to output DMX. The DMX is outputted via the
-[Open Lighting Framework's](https://www.openlighting.org/ola/developer-documentation/python-api/)
-Python API and a simple serial connection. It will also run a WebSocket server using [ws3py](https://ws4py.readthedocs.org/en/latest/).
-
-There are a variety of simple commands that control the server's output. These include standard theatrical
-lighting console commands like `Channel 1 @ 100`, and also has the ability to save scenes/sequences
-containing certain channels that can be recalled later.
-
-The system is designed to run on a Raspberry Pi, and will be tested on that platform in addition to OSX. 
-
-### Hardware
-
-The serial output has been tested with:
-
-- [Enttec DMX USB Pro](https://www.enttec.com/?main_menu=Products&pn=70304)
-- [DMXking ultraDMX Micro](http://dmxking.com/usbdmx/ultradmxmicro)
-
-It should also be compatible with other DMXKing Devices.
-
-For use with the Open Lighting Architecture, [these devices](https://www.openlighting.org/ola/) should be supported.
 
 ## Installation 
 

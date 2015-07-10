@@ -1,0 +1,367 @@
+<h1 id="dmx-lighting-server">DMX Lighting Server</h1>
+<h2 id="installation">Installation</h2>
+<ul>
+<li><a href="https://www.openlighting.org/">Open Lighting Architecture</a> if using OLA for the DMX output
+<ul>
+<li>With Python API enabled</li>
+</ul></li>
+<li><a href="https://pypi.python.org/pypi/pyserial">PySerial</a></li>
+<li><a href="http://cherrypy.readthedocs.org/en/latest/install.html">CherryPy</a></li>
+<li><a href="https://ws4py.readthedocs.org/en/latest/">ws4py</a></li>
+<li>Python <a href="https://pypi.python.org/pypi/python-dateutil">dateutil</a></li>
+<li><a href="http://httpd.apache.org/">Apache2</a> and <a href="http://php.net/">PHP5</a>, if using the html command line interface</li>
+<li><a href="https://pypi.python.org/pypi/websocket-client/">websocket-client</a>, for calling single commands</li>
+</ul>
+<h3 id="other-resources">Other Resources</h3>
+<p>You may need to install and configure your raspberry pi in other ways before you can install the lighting controller. Here are some resources for common setups:</p>
+<ul>
+<li>Use <code>sudo raspi-config</code> to configure basic system settings</li>
+<li><a href="https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md">Configuring a wireless adapter</a></li>
+<li><a href="">Setting up RPI to log in automatically</a></li>
+<li>Use <code>sudo apt-get install vim</code> to install the vim text editor</li>
+</ul>
+<h3 id="steps">Steps</h3>
+<p>Install the <a href="https://www.raspberrypi.org/downloads/">Raspian (Debian Wheezy)</a> <a href="https://www.raspberrypi.org/documentation/installation/installing-images/README.md">image onto an SD card</a>.</p>
+<h4 id="install-the-dependencies">Install the Dependencies:</h4>
+<ul>
+<li>Update aptitude:
+<ul>
+<li><code>sudo apt-get update</code></li>
+</ul></li>
+<li>Install PIP to install Python dependencies:
+<ul>
+<li><code>sudo apt-get install python-pip</code></li>
+</ul></li>
+<li>Install Python development headers:
+<ul>
+<li><code>sudo apt-get install python-dev</code></li>
+</ul></li>
+<li>Install Python dependencies:
+<ul>
+<li><code>sudo pip install pyserial cherrypy ws4py python-dateutil</code></li>
+</ul></li>
+<li>Install Apache and PHP:
+<ul>
+<li><code>sudo apt-get install apache2</code></li>
+<li><code>sudo apt-get install php5-common libapache2-mod-php5 php5-cli</code> <a href="http://php.net/manual/en/install.unix.debian.php">More info</a></li>
+<li>Restart Apache: <code>sudo service apache2 restart</code></li>
+</ul></li>
+</ul>
+<h4 id="clone-the-repository">Clone the repository:</h4>
+<ul>
+<li><code>git clone https://github.com/eburlingame/lightingserver.git</code></li>
+</ul>
+<h4 id="setting-up-html-command-line">Setting up HTML Command Line</h4>
+<p>To access the HTML command line page we must serve it using Apache. To do this we must set Apache's document root to the <code>/web</code> folder.</p>
+<ul>
+<li>Change the virtual hosts configuration:
+<ul>
+<li><code>sudo vim /etc/apache2/sites-available/default</code></li>
+<li>Change the line <code>DocumentRoot /var/www/</code> to <code>DocumentRoot /home/pi/lightingserver/web/</code></li>
+<li>Change the line <code>&lt;Directory /var/www/&gt;</code> to <code>&lt;DocumentRoot /home/pi/lightingserver/web/&gt;</code></li>
+<li>Use <code>Escape</code> and <code>:wq</code> to save and quit vim</li>
+</ul></li>
+<li>Restart Apache with <code>sudo service apache2 restart</code></li>
+</ul>
+<h2 id="running-the-server">Running the Server</h2>
+<p>To start the server and it's command line interface simply run:</p>
+<p><code>python lightingserver/main.py</code></p>
+<h3 id="running-the-server-at-startup">Running the Server at Startup</h3>
+<p>If you wish to start the server automatically at startup:</p>
+<ul>
+<li>Edit <code>/etc/profile</code> with <code>sudo vim /etc/profile</code></li>
+<li>Add <code>python ~/lightingserver/main.py</code> at the end of the file</li>
+<li>Use <code>Escape</code> and <code>:wq</code> to save and quit vim</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<p>The server takes commands through the command line interface or through a websocket connection. These commands change the state of the controller, and thus the state of the DMX output. These commands are designed to be basic, but flexible, allowing a user, or another piece of software, to call commands and provide ample control of the output.</p>
+<h3 id="notes">Notes</h3>
+<p>Commands are processed without whitespace, which means the program does not rely on splitting by spaces, etc. Bear in mind that this can cause issues if two words run into one another and form a different word.</p>
+<h2 id="commands">Commands</h2>
+<h4 id="command-description-format">Command Description Format</h4>
+<p>We will use these special characters to describe the format of commands:</p>
+<ul>
+<li><code>(*, *, *)</code>: a, b, and c will all perform the same function</li>
+<li><code>[*]</code> : A value that will be entered by the user</li>
+<li><code>~*</code> : Denotes an optional field</li>
+</ul>
+<h3 id="channel-selection">Channel Selection</h3>
+<p>Channels can be selected in the following ways:</p>
+<ul>
+<li><code>[channel #1] (/, thru, through) [channel #2]</code>
+<ul>
+<li>Selects channel #1 through channel #2 (inclusive)</li>
+</ul></li>
+<li><code>[channel #1] (&amp;, and, +) [channel #2]</code>
+<ul>
+<li>Selects channel #1 and channel #2</li>
+</ul></li>
+<li><code>[channel #1] (&amp;, and, +) [channel #2] (except, -) [channel #2]</code>
+<ul>
+<li>Selects channel #1 through channel #2, discluding channel #3</li>
+</ul></li>
+<li><code>Group [Group name]</code>
+<ul>
+<li>Selects the channel in the group name</li>
+</ul></li>
+<li><code>Fixture [Fixture label]</code>
+<ul>
+<li>Selects the fixture(s) matching that label</li>
+</ul></li>
+<li><code>Fixture [range selection] ~channel ~[channel number]</code>
+<ul>
+<li>Selects the channels associated with the given fixture (only a single channel can be selected)</li>
+<li>If the channel is supplied, then it will select the relative channel associated with that fixture</li>
+</ul></li>
+</ul>
+<h3 id="basic-control">Basic Control</h3>
+<ul>
+<li><code>[Channel Selection] (@, at, *) [percent]</code>
+<ul>
+<li>Set the given output DMX channel to a given percent</li>
+</ul></li>
+<li><code>(@, at, *) [percent]</code>
+<ul>
+<li>Sets the last selected channels to percent.</li>
+</ul></li>
+</ul>
+<h3 id="patching">Patching</h3>
+<p>Channels must be patched to an output DMX channel to be set.</p>
+<ul>
+<li><code>patch channel [channel selection] dmx [dmx channel selection] ~fixture [fixture number] ~label [fixture label]</code>
+<ul>
+<li>Patches a new channel in the given channel number to the starting DMX address described</li>
+<li>A fixture number can be optionally specified</li>
+<li>A label can be optionally specified</li>
+</ul></li>
+<li><code>patch (one-to-one, one2one) channel [channel selection] dmx [channel address selection]</code>
+<ul>
+<li>Creates a 1 to 1 channel patch with matching the two selection</li>
+<li>The same number of channels and DMX address must be inputed</li>
+</ul></li>
+<li><code>unpatch channel [channel selection]</code>
+<ul>
+<li>Unpatched the given channels</li>
+</ul></li>
+<li><code>unpatch dmx [dmx channel selection]</code>
+<ul>
+<li>Unpatched the channels associated with the given DMX output channels</li>
+</ul></li>
+<li><code>print patch</code>
+<ul>
+<li>Prints a text description of the current channel patching</li>
+</ul></li>
+</ul>
+<h3 id="groups">Groups</h3>
+<ul>
+<li><code>save group [name]</code>
+<ul>
+<li>Saves the last selected channels into a group with the specified name</li>
+</ul></li>
+<li><code>save group [name] channel [channel selection]</code>
+<ul>
+<li>Saves the specified channels into a group with the specified name</li>
+</ul></li>
+<li><code>list groups</code>
+<ul>
+<li>Prints a list of all the groups currently saved</li>
+</ul></li>
+<li><code>print group [group name]</code>
+<ul>
+<li>Prints a text description of the given group</li>
+</ul></li>
+</ul>
+<h3 id="scenes">Scenes</h3>
+<ul>
+<li><code>save (scene) [scene name] ~fade [~fade time] ~channel ~[channel selection]</code>
+<ul>
+<li>Saves the current channel values (those that are above 0%) as a scene with the given name</li>
+<li>Specifying a fade time will make that its default fade up time</li>
+<li>Specifying the channels will save only those channels</li>
+</ul></li>
+<li><code>save (scene) [scene name] ~fade [~fade time] { fixture commands }</code>
+<ul>
+<li>Works the same as above, except the channel commands will define the scene contents</li>
+</ul></li>
+<li><code>load scene [scene name] ~fade [~fade time] ~%~[percent]</code>
+<ul>
+<li>Loads the given scene with the given fade.</li>
+<li>Uses the saved fade time if none is supplied, or the default if it is not saved.</li>
+<li>Specifying a percent will load the scene at that intensity</li>
+</ul></li>
+<li><code>load scene [scene name] ~fade [~fade time] ~%~[percent] channel [channel selection]</code>
+<ul>
+<li>Loads the given scene with the given fade.</li>
+<li>Uses the saved fade time if none is supplied, or the default if it is not saved. The channel options lets you specify a range of channels you want the scene to act over.</li>
+</ul></li>
+<li><code>delete scene [scene name]</code>
+<ul>
+<li>Will delete the scene</li>
+</ul></li>
+<li><code>clear scenes</code>
+<ul>
+<li>Will delete all the scenes save in the controller</li>
+</ul></li>
+<li><code>list scenes</code>
+<ul>
+<li>Will list a text representation of the scenes currently saved in the controller</li>
+</ul></li>
+<li><code>print scene [scene name]</code>
+<ul>
+<li>Will print a textual representation of the given scene</li>
+</ul></li>
+</ul>
+<h3 id="sequences">Sequences</h3>
+<ul>
+<li><code>save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time] ~wait [~wait time] ~all ~cued ~channel ~[channel selection]</code>
+<ul>
+<li>Saves the current channel values (those above 0%) as the step for a sequence</li>
+<li>Specifying the <code>step</code> will overwrite that step, or insert it if it does not exist.</li>
+<li>If <code>insert</code> is provided then it will insert it at that location</li>
+<li>Omitting <code>fade</code> or <code>wait</code> will use the default fade and wait time, or the times defined by the user when loaded</li>
+<li>Specifying the channel will save only those channels specified</li>
+<li>Adding <code>cued</code> to the first save of the sequence will require the sequence to be stepped through manually using the <code>advance</code> command</li>
+</ul></li>
+<li><code>save sequence [sequence name] ~insert ~step ~[step] ~fade [~fade time] ~wait [~wait time] ~(cued) { [channel commands] }</code>
+<ul>
+<li>Works the same as above, except the contents of the sequence step will be defined by the channel commands surrounded by brackets</li>
+</ul></li>
+<li><code>load sequence [sequence name] ~fade [~fade time] ~wait [~wait time] ~step ~[step number] ~(cued)</code>
+<ul>
+<li>Loads the given sequence with the designated fade time and wait time, if supplied</li>
+<li>The saved fade and wait times will be used, or the ones stored with the sequence if supplied.</li>
+<li>If step is supplied it will start the sequence at that step.</li>
+<li>When the same sequence is running multiple times at once (for instance over a different set of channels) it will be given a unique running id, which can be used to advance, pause or stop the sequence</li>
+</ul></li>
+<li><code>delete sequence [sequence name]</code>
+<ul>
+<li>Deletes the entire sequence</li>
+</ul></li>
+<li><code>delete sequence [sequence name] step [step number]</code>
+<ul>
+<li>Deletes the specified step in the given sequence</li>
+</ul></li>
+<li><code>unload ~sequence [sequence name] ~id [running id] ~all</code>
+<ul>
+<li>Stops the given sequence and removes it from the running queue. Restarting requires the load command.</li>
+<li>Supplying the running id parameter will unload the sequence with that matching id; not supplying it will unload all sequences matching that name.</li>
+<li>If all is supplied it will stop all sequences</li>
+</ul></li>
+<li><code>pause ~[sequence name] ~id [running id]</code>
+<ul>
+<li>Pauses the given sequence, where it can be resumed with the unpause command.</li>
+</ul></li>
+<li><code>(pause, hold) all</code>
+<ul>
+<li>Pauses all sequences</li>
+</ul></li>
+<li><code>(unpause, play) [sequence name] ~id [running id]</code>
+<ul>
+<li>Resumes the given sequence.</li>
+</ul></li>
+<li><code>advance [sequence name] ~fade [fade time] ~id</code> [running id]
+<ul>
+<li>Advances the given sequence to its next step.</li>
+<li>If the sequence is not running, it will load the sequence with default parameters</li>
+</ul></li>
+<li><code>clear sequences</code>
+<ul>
+<li>Deletes all sequences in the controller</li>
+</ul></li>
+<li><code>print sequence [sequence name]</code>
+<ul>
+<li>Prints a text description of the sequence given</li>
+</ul></li>
+<li><code>list sequences</code>
+<ul>
+<li>Lists the currently save seqeuences</li>
+</ul></li>
+<li><code>list running</code>
+<ul>
+<li>Lists the sequences that are currently running along with their running ids</li>
+</ul></li>
+<li><code>load-csv [filename]</code>
+<ul>
+<li>This will read in data from a comma-separated text file and put the contents in its own sequence named the same as the file</li>
+<li>The <code>filename</code> is the relative file path from the root folder of the server (where <code>main.py</code> is located) to a valid comma-separated file</li>
+<li>The columns of the CSV file should be formatted as followed:
+<ul>
+<li>Step number (ignored)</li>
+<li>Label</li>
+<li>Fade time</li>
+<li>Wait time</li>
+<li>Channel 1 value</li>
+<li>Channel 2 value</li>
+<li>...</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="shortcuts">Shortcuts</h3>
+<p>Shortcuts are defined to more easily run commands. Before any commands are run, the shortcuts are processed and the shortcut is replaced with its command.</p>
+<ul>
+<li><code>define &quot;[shortcut]&quot; as &quot;[command to be run]</code>
+<ul>
+<li>Creates a custom command/macro that can be used as a shortcut for a command</li>
+<li>The first argument is the shortcut the user will type in.</li>
+<li>The second argument is the command that will be run (it will replace the shortcut).</li>
+<li>You cannot use reserved keywords (words used in built-in commands) in the shortcut</li>
+<li>You can use custom arguments in the shortcut by replacing them with a #. In the command, you can use the syntax [0] to refer to the first arguments [1] to the second, and so on
+<ul>
+<li>Consider 'define &quot;# half&quot; as &quot;[0] at 50&quot; ', when '2 half' is entered, it will be replaced with '2 at 50', and set channel 2 to 50%</li>
+</ul></li>
+</ul></li>
+<li><code>list shortcuts</code>
+<ul>
+<li>Lists the currently saved shortcuts</li>
+</ul></li>
+<li><code>delete shortcut &quot;[shortcut]&quot;</code>
+<ul>
+<li>Deletes the shortcut</li>
+</ul></li>
+</ul>
+<h3 id="scheduling">Scheduling</h3>
+<ul>
+<li><code>schedule &quot;[command]&quot; at [time]</code>
+<ul>
+<li>Will execute the given command at the specified time</li>
+<li>The time format is flexible, and can be entered in a variety of ways including:
+<ul>
+<li>HH:MM</li>
+<li>HH:MM:SS</li>
+<li>HH:MM am/pm</li>
+<li>...</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="utility-functions">Utility Functions</h3>
+<ul>
+<li><code>print ~channels</code>
+<ul>
+<li>Running <code>print</code> or <code>print channels</code> will print out the current channel values</li>
+</ul></li>
+<li><code>open</code>
+<ul>
+<li>Open the DMX output on the USB interface</li>
+</ul></li>
+<li><code>close</code>
+<ul>
+<li>Close the DMX output on the USB interface</li>
+</ul></li>
+<li><code>write</code>
+<ul>
+<li>Writes all stored information to the <code>data.txt</code> file</li>
+</ul></li>
+<li><code>read</code>
+<ul>
+<li>Reads all the information from the <code>data.txt</code> file</li>
+</ul></li>
+<li><code>server start ~port [port]</code>
+<ul>
+<li>Attempts to open the server on the specified port</li>
+<li>Port will default to 8080 if not specified</li>
+</ul></li>
+<li><code>server stop</code>
+<ul>
+<li>Stops the server if it is running.</li>
+</ul></li>
+</ul>

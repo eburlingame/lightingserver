@@ -691,6 +691,7 @@ class Controller:
     def read_csv_list(self, args):
         filepath = required_arg(args, 0, "A filepath must be supplied")
         absPath = self.main.get_abs_path(filepath)
+        print "abs path %s" % absPath
         try:
             csv = CSVFile(absPath, self)
         except Exception, e:

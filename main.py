@@ -64,6 +64,9 @@ class Main:
         elif re.match("write", noWhite):
             return self.write_file(self.dataPath)
 
+        elif re.match("startserver(\d+)", noWhite):
+            match = re.match("startserver(\d+)", noWhite)
+            return self.start_server(int(match.group(1)))
         elif re.match("startserver", noWhite):
             return self.start_server()
 
@@ -71,8 +74,6 @@ class Main:
             return self.open_interface()
         elif re.match("close", noWhite):
             return self.close_interface()
-
-
 
         else:
             # return colors.OKGREEN + self.command.runCommand(cmd) + colors.ENDC
@@ -116,8 +117,7 @@ class Main:
         file.close()
         return "Wrote file %s " % filepath
 
-    def start_server(self):
-        port = 8080
+    def start_server(self, port = 8080):
         server = WSServer(self, port)
         return "Server started on port %s" % server.port
 
@@ -134,6 +134,7 @@ class Main:
         return self.dmxOut.stop()
 
     def quit(self):
+        self.write_file(self.dataPath)
         self.dmxOut.stop()
         quit(0)
 
