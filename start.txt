@@ -1,5 +1,5 @@
 read
 open
-
+load-csv show.csv
 start server
 

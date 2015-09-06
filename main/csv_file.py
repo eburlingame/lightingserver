@@ -37,13 +37,13 @@ class CSVFile:
 
             channel = 0
             stepState = ChannelState(self.controller)
-            for i in range(5, len(cols)):
+            for i in range(4, len(cols)):
                 try:
                     value = int(cols[i])
                 except:
                     value = 0
-                stepState.channel_at(channel, value)
                 channel += 1
+                stepState.channel_at(channel, value)
 
             step = SequenceStep(number, label, stepState, fade, wait)
             self.sequence.append_step(step)
